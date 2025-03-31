@@ -1,0 +1,12 @@
+networks:
+    transcendence-network:
+        name: transcendence-network
+services:
+  frontend:
+    image: frontend-img
+    build: ./services/website/frontend
+    container_name: frontend
+    hostname: frontend
+    restart: unless-stopped
+    networks:
+      - transcendence-network
