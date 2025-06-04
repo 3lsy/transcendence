@@ -1,0 +1,62 @@
+# Node.js
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.*
+
+# TypeScript
+*.tsbuildinfo
+
+# SQLite
+*.sqlite
+*.sqlite-journal
+
+# Docker
+*.pid
+docker-compose.override.yml
+docker-volume/
+*.tar
+
+# Logs
+logs/
+*.log
+log/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor-specific
+.vscode/
+.idea/
+*.swp
+*.swo
+~*  # Files starting with ~
+
+# Grafana
+grafana/data/
+grafana/plugins/
+grafana/logs/
+
+# Prometheus
+prometheus/data/
+prometheus/*.db
+
+# Build artifacts
+coverage/
+coverage-final.json
+.nyc_output/
+
+# Compiled frontend
+frontend/dist/
+frontend/.vite/
+
+# Misc
+*.bak
+*.tmp
+*.orig
