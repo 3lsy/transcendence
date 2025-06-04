@@ -32,15 +32,39 @@
 | **API Security** | If an API is implemented, all routes must be secured. Even without JWT authentication, adequate security measures must be in place. |
 | **Environment Configuration** | Sensitive credentials must be stored in a `.env` file and excluded from version control. |
 
-
 ## Chosen Modules
 
-1. **Major**: Use a framework to build the back-end  
-   - [Fastify](https://fastify.dev/)
+### Web
 
-2. **Minor**: Use a framework or toolkit to build the front-end  
-   - [Tailwind CSS](https://tailwindcss.com/)
+- **Backend framework** – Use a framework to build the backend (Major)  
+  - [Fastify](https://fastify.dev/)
+- **Frontend framework/toolkit** – Use a framework or toolkit to build the front-end (Minor)  
+  - [Tailwind CSS](https://tailwindcss.com/)
+- **Database** – Use a database for the backend and more (Minor)  
+  - [SQLite](https://www.sqlite.org/)
 
-3. **Minor**: Use a database for the back-end (prerequisite for back-end and other modules)
+### Cybersecurity
 
-4. **Major**: ...
+- **WAF & Vault** – Implement WAF/ModSecurity with Hardened Configuration and HashiCorp Vault for Secrets Management (Major)  
+  - [ModSecurity](https://modsecurity.org/)  
+  - [HashiCorp Vault](https://www.vaultproject.io/)
+
+### DevOps
+
+- **ELK Stack** – Infrastructure setup with ELK for log management (Major)  
+  - [Elasticsearch](https://www.elastic.co/elasticsearch/)  
+  - [Logstash](https://www.elastic.co/logstash/)  
+  - [Kibana](https://www.elastic.co/kibana/)
+- **Monitoring system** – Add a system to monitor infrastructure and services (Minor)  
+  - [Prometheus](https://prometheus.io/)  
+  - [Grafana](https://grafana.com/)
+- **Microservices** – Design the backend as microservices (Major)
+
+### Server-Side Pong
+
+- **Server-side Pong & API** – Replace basic Pong with server-side Pong and implement an API (Major)
+
+### Accessibility
+
+- **Multilanguage support** – Support multiple languages (Minor)
+
