@@ -1,12 +1,57 @@
 networks:
     transcendence-network:
         name: transcendence-network
+
+volumes:
+  grafana-data:
+    name: grafana-data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: data/grafana-data
+
+  prometheus-data:
+    name: prometheus-data
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: data/prometheus-data
+
 services:
-  frontend:
-    image: frontend-img
-    build: ./services/website/frontend
-    container_name: frontend
-    hostname: frontend
+  # frontend:
+  #   image: frontend-img
+  #   build: ./services/website/frontend
+  #   container_name: frontend
+  #   hostname: frontend
+  #   restart: unless-stopped
+  #   networks:
+  #     - transcendence-network
+  grafana:
+    image: grafana-tc
+    build: ./services/monitoring/grafana
+    container_name: grafana
+    hostname: grafana
     restart: unless-stopped
     networks:
       - transcendence-network
+    ports:
+      - "3000:3000"  # Grafana web interface
+    volumes:
+      - grafana-data:/var/lib/grafana
+  
+  prometheus:
+    image: prometheus-tc
+    build: ./services/monitoring/prometheus
+    container_name: prometheus
+    hostname: prometheus
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "9090:9090"  # Prometheus web interface
+    volumes:
+      - prometheus-data:/prometheus
+      - ./services/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./services/monitoring/prometheus/rules.yml:/etc/prometheus/rules.yml:ro
