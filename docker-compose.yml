@@ -90,3 +90,18 @@ services:
     volumes:
       - vault-data:/vault/data
       - ./services/vault/conf/config.hcl:/vault/config/config.hcl:ro
+  
+  rproxy:
+    build: ./services/rproxy
+    image: rproxy-tc
+    container_name: rproxy
+    hostname: rproxy
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "80:80"  # HTTP
+      - "443:443"  # HTTPS
+    volumes:
+      - ./services/rproxy/conf:/etc/nginx/conf.d:ro
+      - ./services/rproxy/certs:/etc/nginx/certs:ro
