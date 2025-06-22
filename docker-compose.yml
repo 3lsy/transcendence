@@ -9,7 +9,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: data/grafana-data
+      device: ./data/grafana-data
 
   prometheus-data:
     name: prometheus-data
@@ -17,7 +17,14 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: data/prometheus-data
+      device: ./data/prometheus-data
+  
+  vault-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/vault-data
 
 services:
   # frontend:
@@ -79,4 +86,7 @@ services:
     networks:
       - transcendence-network
     ports:
-      - "8200:8200"  # Vault API
+      - "8200:8200"
+    volumes:
+      - vault-data:/vault/data
+      - ./services/vault/conf/config.hcl:/vault/config/config.hcl:ro
