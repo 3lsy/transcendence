@@ -21,16 +21,16 @@ volumes:
 
 services:
   # frontend:
-  #   image: frontend-img
-  #   build: ./services/website/frontend
+  #   build: ./services/frontend
+  #   image: frontend-tc
   #   container_name: frontend
   #   hostname: frontend
   #   restart: unless-stopped
   #   networks:
   #     - transcendence-network
   grafana:
-    image: grafana-tc
     build: ./services/monitoring/grafana
+    image: grafana-tc
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
@@ -42,8 +42,8 @@ services:
       - grafana-data:/var/lib/grafana
   
   prometheus:
-    image: prometheus-tc
     build: ./services/monitoring/prometheus
+    image: prometheus-tc
     container_name: prometheus
     hostname: prometheus
     restart: unless-stopped
@@ -70,3 +70,13 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
 
+  vault:
+    build: ./services/vault
+    image: vault-tc
+    container_name: vault
+    hostname: vault
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "8200:8200"  # Vault API
