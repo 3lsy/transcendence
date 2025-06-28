@@ -47,7 +47,9 @@ services:
       - "3000:3000"  # Grafana web interface
     volumes:
       - grafana-data:/var/lib/grafana
-  
+      - ./services/monitoring/grafana/conf/grafana.ini:/etc/grafana/grafana.ini:ro
+      - ./services/monitoring/grafana/certs:/etc/grafana/certs:ro
+
   prometheus:
     build: ./services/monitoring/prometheus
     image: prometheus-tc
@@ -100,8 +102,8 @@ services:
     networks:
       - transcendence-network
     ports:
-      - "80:80"  # HTTP
-      - "443:443"  # HTTPS
+      - "80:80"
+      - "443:443"
     volumes:
       - ./services/rproxy/conf:/etc/nginx/conf.d:ro
       - ./services/rproxy/certs:/etc/nginx/certs:ro
