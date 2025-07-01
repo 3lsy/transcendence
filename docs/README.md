@@ -1,5 +1,9 @@
 # My Transcendence
 
+## Architecture Diagram
+
+![Architecture-Diagram](Architecture-Diagram.png)
+
 ## Base of the Website
 
 | Component  | Requirements |
