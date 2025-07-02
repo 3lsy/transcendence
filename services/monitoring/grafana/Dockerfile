@@ -1,6 +1,3 @@
-# FROM grafana/grafana:11.6.3
-
-# Use Rocky Linux 9.6 minimal base image
 FROM rockylinux/rockylinux:9.6
 
 # Install prerequisites and add Grafana yum repository
