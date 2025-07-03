@@ -105,5 +105,5 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./services/rproxy/conf:/etc/nginx/conf.d:ro
-      - ./services/rproxy/certs:/etc/nginx/certs:ro
+      - ./services/rproxy/conf/apache.conf:/etc/apache2/sites-available/000-default.conf:ro
+      - ./services/rproxy/certs:/etc/apache2/certs:ro
