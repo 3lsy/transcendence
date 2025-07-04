@@ -1,0 +1,25 @@
+[req]
+default_bits       = 4096
+distinguished_name = req_distinguished_name
+x509_extensions    = v3_req
+prompt             = no
+
+[req_distinguished_name]
+C  = FR
+ST = Paris
+L  = Paris
+O  = 42
+OU = 42
+CN = rproxy.localhost
+
+[v3_req]
+subjectAltName = @alt_names
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+
+[alt_names]
+DNS.1 = rproxy.localhost
+DNS.2 = grafana.localhost
+DNS.3 = prometheus.localhost
+DNS.4 = vault.localhost
