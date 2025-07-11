@@ -1,0 +1,18 @@
+network.host: 0.0.0.0
+discovery.type: single-node
+
+# Disable security features for dev/test
+xpack.security.enabled: false
+xpack.security.http.ssl.enabled: false
+xpack.security.transport.ssl.enabled: false
+
+# xpack.security.enabled: true
+
+# xpack.security.http.ssl.enabled: true
+# xpack.security.http.ssl.key: /etc/elasticsearch/certs/elasticsearch.key
+# xpack.security.http.ssl.certificate: /etc/elasticsearch/certs/elasticsearch.crt
+# xpack.security.http.ssl.verification_mode: certificate
+# xpack.security.http.ssl.verification_mode: none
+# xpack.security.transport.ssl.enabled: false
+
+#elasticsearch  | [2025-07-08T21:38:39,198][ERROR][o.e.b.Elasticsearch      ] [elasticsearch] fatal exception while booting Elasticsearch org.elasticsearch.ElasticsearchSecurityException: invalid SSL configuration for xpack.security.transport.ssl - server ssl configuration requires a key and certificate, but these have not been configured; you must set either [xpack.security.transport.ssl.keystore.path], or both [xpack.security.transport.ssl.key] and [xpack.security.transport.ssl.certificate]
