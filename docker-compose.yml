@@ -25,6 +25,13 @@ volumes:
       type: none
       o: bind
       device: ./data/vault-data
+  
+  elasticsearch-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/elasticsearch-data
 
 services:
   # frontend:
@@ -106,3 +113,17 @@ services:
       - "443:443"
     volumes:
       - ./services/rproxy/conf/redirect.conf:/etc/httpd/conf.d/redirect.conf:ro
+
+  elasticsearch:
+    build: ./services/logs-management/elasticsearch
+    image: elasticsearch-tc
+    container_name: elasticsearch
+    hostname: elasticsearch
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "9200:9200"  # Elasticsearch HTTP API
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      # - ./services/logs-management/elasticsearch/certs:/etc/elasticsearch/certs:ro
