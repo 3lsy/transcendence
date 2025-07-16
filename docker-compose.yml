@@ -126,4 +126,5 @@ services:
       - "9200:9200"  # Elasticsearch HTTP API
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
-      # - ./services/logs-management/elasticsearch/certs:/etc/elasticsearch/certs:ro
+      - ./services/logs-management/elasticsearch/certs/elasticsearch.key:/etc/elasticsearch/elasticsearch.key:ro
+      - ./services/logs-management/elasticsearch/certs/elasticsearch.crt:/etc/elasticsearch/elasticsearch.crt:ro

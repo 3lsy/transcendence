@@ -24,8 +24,10 @@ RUN chown -R elasticsearch:elasticsearch /etc/elasticsearch /var/lib/elasticsear
 COPY conf/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 RUN chown elasticsearch:elasticsearch /etc/elasticsearch/elasticsearch.yml
 
+COPY conf/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
 # Switch to the non-root user
 USER elasticsearch
 
-# Run Elasticsearch directly
-CMD ["/usr/share/elasticsearch/bin/elasticsearch"]
+CMD ["/usr/local/bin/start.sh"]
