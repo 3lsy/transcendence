@@ -1,0 +1,6 @@
+# List of pipelines to be loaded by Logstash
+
+- pipeline.id: main
+  path.config: "/usr/share/logstash/pipeline"
+  pipeline.workers: 1
+  queue.type: memory
