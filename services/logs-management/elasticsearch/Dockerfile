@@ -20,10 +20,6 @@ COPY conf/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 # Give permission to the Elasticsearch directories
 RUN chown -R elasticsearch:elasticsearch /etc/elasticsearch /var/lib/elasticsearch /usr/share/elasticsearch
 
-# Copy custom elasticsearch.yml
-COPY conf/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
-RUN chown elasticsearch:elasticsearch /etc/elasticsearch/elasticsearch.yml
-
 COPY conf/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
