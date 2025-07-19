@@ -15,4 +15,6 @@ RUN chown -R kibana:kibana /etc/kibana /usr/share/kibana
 
 USER kibana
 
+ENV ES_JAVA_OPTS="-Xms1g -Xmx1g"
+
 CMD ["/usr/share/kibana/bin/kibana"]
