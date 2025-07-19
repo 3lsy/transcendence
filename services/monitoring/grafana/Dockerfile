@@ -8,5 +8,15 @@ RUN dnf install -y wget gnupg && \
     dnf install -y grafana && \
     dnf clean all
 
+RUN mkdir -p /var/lib/grafana/dashboards
+
+COPY conf/datasources.yml /usr/share/grafana/conf/provisioning/datasources/datasources.yml
+COPY conf/dashboards.yml /usr/share/grafana/conf/provisioning/dashboards/dashboards.yml
+COPY conf/cAdvisor.json /var/lib/grafana/dashboards/cAdvisor.json
+
+RUN chown -R grafana:grafana /etc/grafana /var/lib/grafana /usr/share/grafana
+
+USER grafana
+
 # Start Grafana server
 CMD ["/usr/sbin/grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
