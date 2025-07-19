@@ -39,6 +39,13 @@ volumes:
       type: none
       o: bind
       device: ./data/logstash-data
+  
+  kibana-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/kibana-data
 
 services:
   # frontend:
@@ -150,3 +157,16 @@ services:
     volumes:
       - logstash-data:/usr/share/logstash/data
       - ./services/logs-management/logstash/pipelines:/usr/share/logstash/pipeline:ro
+
+  kibana:
+    build: ./services/logs-management/kibana
+    image: kibana-tc
+    container_name: kibana
+    hostname: kibana
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "5601:5601"  # Kibana web interface
+    volumes:
+      - kibana-data:/usr/share/kibana/data
