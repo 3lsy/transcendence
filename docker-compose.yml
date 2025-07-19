@@ -32,6 +32,13 @@ volumes:
       type: none
       o: bind
       device: ./data/elasticsearch-data
+  
+  logstash-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/logstash-data
 
 services:
   # frontend:
@@ -128,3 +135,18 @@ services:
       - elasticsearch-data:/usr/share/elasticsearch/data
       - ./services/logs-management/elasticsearch/certs/elasticsearch.key:/etc/elasticsearch/elasticsearch.key:ro
       - ./services/logs-management/elasticsearch/certs/elasticsearch.crt:/etc/elasticsearch/elasticsearch.crt:ro
+
+  logstash:
+    build: ./services/logs-management/logstash
+    image: logstash-tc
+    container_name: logstash
+    hostname: logstash
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "5044:5044"  # Logstash Beats input
+      - "9600:9600"  # Logstash monitoring API
+    volumes:
+      - logstash-data:/usr/share/logstash/data
+      - ./services/logs-management/logstash/pipelines:/usr/share/logstash/pipeline:ro
