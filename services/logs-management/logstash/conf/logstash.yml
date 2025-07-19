@@ -1,4 +1,5 @@
-xpack.monitoring.enabled: false
 queue.type: persisted
 path.queue: /var/lib/logstash/data
 dead_letter_queue.enable: false
+api.http.host: 0.0.0.0
+api.http.port: 9600
