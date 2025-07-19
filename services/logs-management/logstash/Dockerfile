@@ -16,4 +16,6 @@ RUN chown -R logstash:logstash /etc/logstash /var/lib/logstash /usr/share/logsta
 
 USER logstash
 
+ENV ES_JAVA_OPTS="-Xms1g -Xmx1g"
+
 CMD ["/usr/share/logstash/bin/logstash"]

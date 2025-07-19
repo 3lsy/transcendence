@@ -26,4 +26,6 @@ RUN chmod +x /usr/local/bin/start.sh
 # Switch to the non-root user
 USER elasticsearch
 
+ENV ES_JAVA_OPTS="-Xms1g -Xmx1g"
+
 CMD ["/usr/local/bin/start.sh"]
