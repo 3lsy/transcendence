@@ -39,6 +39,13 @@ volumes:
       type: none
       o: bind
       device: ./data/logstash-data
+  
+  kibana-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/kibana-data
 
 services:
   # frontend:
@@ -61,8 +68,12 @@ services:
       - "3000:3000"  # Grafana web interface
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./services/monitoring/grafana/conf/cAdvisor.json:/var/lib/grafana/dashboards/cAdvisor.json:ro
       - ./services/monitoring/grafana/conf/grafana.ini:/etc/grafana/grafana.ini:ro
       - ./services/monitoring/grafana/certs:/etc/grafana/certs:ro
+    depends_on:
+      - vault
+      - prometheus
 
   prometheus:
     build: ./services/monitoring/prometheus
@@ -78,6 +89,8 @@ services:
       - prometheus-data:/prometheus
       - ./services/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./services/monitoring/prometheus/rules.yml:/etc/prometheus/rules.yml:ro
+    depends_on:
+      - cadvisor
   
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -135,6 +148,8 @@ services:
       - elasticsearch-data:/usr/share/elasticsearch/data
       - ./services/logs-management/elasticsearch/certs/elasticsearch.key:/etc/elasticsearch/elasticsearch.key:ro
       - ./services/logs-management/elasticsearch/certs/elasticsearch.crt:/etc/elasticsearch/elasticsearch.crt:ro
+    depends_on:
+      - vault
 
   logstash:
     build: ./services/logs-management/logstash
@@ -150,3 +165,22 @@ services:
     volumes:
       - logstash-data:/usr/share/logstash/data
       - ./services/logs-management/logstash/pipelines:/usr/share/logstash/pipeline:ro
+    depends_on:
+      - elasticsearch
+      - kibana
+
+  kibana:
+    build: ./services/logs-management/kibana
+    image: kibana-tc
+    container_name: kibana
+    hostname: kibana
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "5601:5601"  # Kibana web interface
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+    depends_on:
+      - elasticsearch
+      - vault
