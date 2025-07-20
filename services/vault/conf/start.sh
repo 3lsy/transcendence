@@ -44,4 +44,23 @@ else
   exit 1
 fi
 
+# Vault non-interactive login
+export VAULT_TOKEN="$ROOT_TOKEN"
+
+# Enable the KV secrets engine
+vault secrets enable -path=secret kv-v2
+
+## Client Policies
+vault policy write grafana-policy /vault/policies/grafana-policy.hcl
+
+## Client Cert Authentication Method
+vault auth enable cert
+
+## Grafana Client Certificate
+vault write auth/cert/certs/grafana-cert \
+  display_name="grafana" \
+  policies=grafana-policy \
+  certificate=@/vault/certs/grafana.crt \
+  ttl=24h
+
 wait

@@ -8,15 +8,20 @@ RUN dnf install -y wget gnupg && \
     dnf install -y grafana && \
     dnf clean all
 
-RUN mkdir -p /var/lib/grafana/dashboards
+RUN dnf -y install dnf-plugins-core jq \
+    && dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo \
+    && dnf -y install vault \
+    && dnf clean all
 
 COPY conf/datasources.yml /usr/share/grafana/conf/provisioning/datasources/datasources.yml
 COPY conf/dashboards.yml /usr/share/grafana/conf/provisioning/dashboards/dashboards.yml
-COPY conf/cAdvisor.json /var/lib/grafana/dashboards/cAdvisor.json
 
-RUN chown -R grafana:grafana /etc/grafana /var/lib/grafana /usr/share/grafana
+RUN chown -R grafana:grafana /etc/grafana /var/lib/grafana /usr/share/grafana /usr/bin/vault
+
+COPY conf/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
 USER grafana
 
 # Start Grafana server
-CMD ["/usr/sbin/grafana-server", "--homepath=/usr/share/grafana", "--config=/etc/grafana/grafana.ini"]
+CMD ["/usr/local/bin/start.sh"]

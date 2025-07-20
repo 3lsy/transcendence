@@ -8,7 +8,11 @@ RUN dnf -y update \
 
 COPY ./certs/ /vault/certs/
 
-RUN chown -R vault:vault /vault/certs /usr/bin/vault \
+RUN mkdir -p /vault/policies
+
+COPY conf/grafana-policy.hcl /vault/policies/grafana-policy.hcl
+
+RUN chown -R vault:vault /vault/ /usr/bin/vault \
     && chmod 644 /vault/certs/*
 
 COPY conf/start.sh /usr/local/bin/start.sh
