@@ -2,7 +2,7 @@
 
 # This script is to setup the volume directories for the Docker containers
 
-# vault-data : uid=100(vault) gid=1000(vault) groups=1000(vault),1000(vault)
+# vault-data : uid=999(vault) gid=999(vault) groups=999(vault)
 # grafana-data : uid=998(grafana) gid=998(grafana) groups=998(grafana)
 # prometheus-data : uid=1000(prometheus) gid=1000(prometheus) groups=1000(prometheus)
 # elasticsearch-data : uid=999(elasticsearch) gid=999(elasticsearch) groups=999(elasticsearch)
@@ -10,7 +10,7 @@
 # logstash-data : uid=999(logstash) gid=999(logstash) groups=999(logstash)
 
 declare -A volumes=(
-    [vault-data]="100:1000"
+    [vault-data]="999:999"
     [grafana-data]="998:998"
     [prometheus-data]="1000:1000"
     [elasticsearch-data]="999:999"
