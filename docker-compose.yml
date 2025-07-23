@@ -14,10 +14,6 @@ volumes:
   prometheus-data:
     name: prometheus-data
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/prometheus-data
   
   vault-data:
     driver: local
@@ -35,10 +31,6 @@ volumes:
   
   logstash-data:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/logstash-data
   
   kibana-data:
     driver: local
@@ -48,14 +40,17 @@ volumes:
       device: ./data/kibana-data
 
 services:
-  # frontend:
-  #   build: ./services/frontend
-  #   image: frontend-tc
-  #   container_name: frontend
-  #   hostname: frontend
-  #   restart: unless-stopped
-  #   networks:
-  #     - transcendence-network
+  backend:
+    build: ./services/website/backend
+    env_file: ./services/website/backend/.env
+  frontend:
+    build: ./services/website/frontend
+    image: frontend-tc
+    container_name: frontend
+    hostname: frontend
+    restart: unless-stopped
+    networks:
+      - transcendence-network
   grafana:
     build: ./services/monitoring/grafana
     image: grafana-tc
