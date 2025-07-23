@@ -61,6 +61,9 @@ coverage-final.json
 frontend/dist/
 frontend/.vite/
 
+#Vagrant
+.vagrant/
+
 # Misc
 *.bak
 *.tmp
