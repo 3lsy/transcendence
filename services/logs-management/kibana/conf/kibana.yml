@@ -1,1 +1,23 @@
-server.host: 0.0.0.0
+server.host: "0.0.0.0"
+
+# Use HTTPS for the Kibana web interface (served via port 5601)
+server.ssl.enabled: true
+server.ssl.certificate: /etc/kibana/kibana.crt
+server.ssl.key: /etc/kibana/kibana.key
+
+elasticsearch.ssl.verificationMode: none
+
+# Connect to Elasticsearch over HTTPS
+elasticsearch.hosts: ["https://elasticsearch:9200"]
+
+# Authentication to Elasticsearch
+elasticsearch.serviceAccountToken: "AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS10b2tlbjpMY2pkeWxPeVJjV1FUeHVwQmhFNkxR"
+
+# openssl rand -base64 32
+xpack.security.encryptionKey: "8plvDw0x9gvfR5z5S9Uc20FKVoE2+BsG0nFRjhewX6g="
+xpack.encryptedSavedObjects.encryptionKey: "OERhtur3g+IH9Ex3qFZ0VfxiWumClque9YzCIp04iOM="
+xpack.reporting.encryptionKey: "f0xwdgwsxRh0GGYCbzCH6ib0Xlpn31DCdiMtvW0OBGw="
+
+
+# Optional: log level
+# logging.level: info

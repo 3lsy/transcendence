@@ -52,6 +52,7 @@ vault secrets enable -path=secret kv-v2
 
 ## Client Policies
 vault policy write grafana-policy /vault/policies/grafana-policy.hcl
+vault policy write elasticsearch-policy /vault/policies/elasticsearch-policy.hcl
 
 ## Client Cert Authentication Method
 vault auth enable cert
@@ -61,6 +62,13 @@ vault write auth/cert/certs/grafana-cert \
   display_name="grafana" \
   policies=grafana-policy \
   certificate=@/vault/certs/grafana.crt \
+  ttl=24h
+
+## Elasticsearch Client Certificate
+vault write auth/cert/certs/elasticsearch-cert \
+  display_name="elasticsearch" \
+  policies=elasticsearch-policy \
+  certificate=@/vault/certs/elasticsearch.crt \
   ttl=24h
 
 wait

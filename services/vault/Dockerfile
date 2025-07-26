@@ -11,6 +11,7 @@ COPY ./certs/ /vault/certs/
 RUN mkdir -p /vault/policies
 
 COPY conf/grafana-policy.hcl /vault/policies/grafana-policy.hcl
+COPY conf/elasticsearch-policy.hcl /vault/policies/elasticsearch-policy.hcl
 
 RUN chown -R vault:vault /vault/ /usr/bin/vault \
     && chmod 644 /vault/certs/*
