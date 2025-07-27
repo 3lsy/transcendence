@@ -40,7 +40,6 @@ COPY conf/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
 # Enable and start Apache
-# CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
 CMD ["/usr/local/bin/start.sh"]
 
 # Documentation
