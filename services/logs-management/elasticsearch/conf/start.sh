@@ -45,12 +45,16 @@ until vault kv put secret/elasticsearch elastic_password="$ELASTIC_PASSWORD"; do
   sleep 2
 done
 
-# Kibana Token
-# /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token --scope kibana
-
 # Kibana service user token
-/usr/share/elasticsearch/bin/elasticsearch-service-tokens create elastic/kibana kibana-token
+KIBANA_TOKEN=$(/usr/share/elasticsearch/bin/elasticsearch-service-tokens create elastic/kibana kibana-token | awk -F' = ' '{print $2}')
 #SERVICE_TOKEN elastic/kibana/kibana-token = AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS10b2tlbjpMY2pkeWxPeVJjV1FUeHVwQmhFNkxR
+
+# Store the Kibana service user token in Vault
+echo "Storing Kibana service user token in Vault..."
+until vault kv put secret/kibana kibana_service_token="$KIBANA_TOKEN"; do
+  echo "Failed to store Kibana service token in Vault... waiting..."
+  sleep 2
+done
 
 # Bring Elasticsearch back to foreground (optional: tail logs)
 wait
