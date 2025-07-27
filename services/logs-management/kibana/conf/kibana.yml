@@ -1,1 +1,11 @@
-server.host: 0.0.0.0
+server.host: "0.0.0.0"
+
+# Use HTTPS for the Kibana web interface (served via port 5601)
+server.ssl.enabled: true
+server.ssl.certificate: /etc/kibana/kibana.crt
+server.ssl.key: /etc/kibana/kibana.key
+
+elasticsearch.ssl.verificationMode: none
+
+# Connect to Elasticsearch over HTTPS
+elasticsearch.hosts: ["https://elasticsearch:9200"]

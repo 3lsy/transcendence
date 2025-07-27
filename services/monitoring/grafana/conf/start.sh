@@ -2,6 +2,7 @@
 
 export VAULT_ADDR=https://vault:8200
 export VAULT_SKIP_VERIFY=true              # Self-signed certificates require this
+export HOME=/tmp
 
 # Wait for Vault to be unsealed
 echo "Waiting for Vault to be unsealed..."
@@ -16,7 +17,7 @@ echo "Waiting for Vault cert-auth to be ready..."
 until VAULT_TOKEN=$(vault login -method=cert \
     -client-cert=/etc/grafana/certs/grafana.crt \
     -client-key=/etc/grafana/certs/grafana.key \
-    -format=json >/dev/null | jq -r .auth.client_token); do
+    -format=json | jq -r .auth.client_token); do
   echo "Vault login failed (permission denied)... waiting..."
   sleep 2
 done
@@ -28,7 +29,6 @@ echo "Storing Grafana admin password in Vault..."
 until vault kv put secret/grafana admin_password="$RAND"; do
   echo "Failed to store password in Vault... waiting..."
   sleep 2
-  export VAULT_TOKEN=$(vault login -method=cert -client-cert=/etc/grafana/certs/grafana.crt -client-key=/etc/grafana/certs/grafana.key -format=json | jq -r .auth.client_token)
 done
 
 export GF_SECURITY_ADMIN_PASSWORD="$RAND"
