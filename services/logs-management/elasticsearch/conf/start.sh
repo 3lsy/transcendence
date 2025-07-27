@@ -32,11 +32,8 @@ until VAULT_TOKEN=$(vault login -method=cert \
   sleep 2
 done
 
-# Reset Elasticsearch password non-interactively
-output=$(/usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic --batch)
-
-# Extract Elasticsearch password
-ELASTIC_PASSWORD=$(echo "$output" | grep 'New value' | awk -F': ' '{print $2}')
+# Save Elasticsearch password non-interactively
+ELASTIC_PASSWORD=$(/usr/share/elasticsearch/bin/elasticsearch-reset-password --username elastic --auto --batch --silent)
 
 # Store the Elasticsearch user password in Vault
 echo "Storing Elasticsearch admin password in Vault..."
@@ -47,7 +44,6 @@ done
 
 # Kibana service user token
 KIBANA_TOKEN=$(/usr/share/elasticsearch/bin/elasticsearch-service-tokens create elastic/kibana kibana-token | awk -F' = ' '{print $2}')
-#SERVICE_TOKEN elastic/kibana/kibana-token = AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS10b2tlbjpMY2pkeWxPeVJjV1FUeHVwQmhFNkxR
 
 # Store the Kibana service user token in Vault
 echo "Storing Kibana service user token in Vault..."
@@ -56,5 +52,15 @@ until vault kv put secret/kibana kibana_service_token="$KIBANA_TOKEN"; do
   sleep 2
 done
 
-# Bring Elasticsearch back to foreground (optional: tail logs)
+# Logstash save logstash_system user password
+LOGSTASH_PASSWORD=$(/usr/share/elasticsearch/bin/elasticsearch-reset-password --username logstash_system --auto --silent --batch)
+
+# Store the Logstash user password in Vault
+echo "Storing Logstash user password in Vault..."
+until vault kv put secret/logstash logstash_password="$LOGSTASH_PASSWORD"; do
+  echo "Failed to store Logstash password in Vault... waiting..."
+  sleep 2
+done
+
+# Bring Elasticsearch back to foreground
 wait

@@ -78,4 +78,11 @@ vault write auth/cert/certs/kibana-cert \
   certificate=@/vault/certs/kibana.crt \
   ttl=24h
 
+## Kibana Client Certificate
+vault write auth/cert/certs/logstash-cert \
+  display_name="elastic" \
+  policies=elastic-policy \
+  certificate=@/vault/certs/logstash.crt \
+  ttl=24h
+
 wait
