@@ -48,14 +48,6 @@ volumes:
       device: ./data/kibana-data
 
 services:
-  # frontend:
-  #   build: ./services/frontend
-  #   image: frontend-tc
-  #   container_name: frontend
-  #   hostname: frontend
-  #   restart: unless-stopped
-  #   networks:
-  #     - transcendence-network
   grafana:
     build: ./services/monitoring/grafana
     image: grafana-tc
@@ -74,6 +66,7 @@ services:
     depends_on:
       - vault
       - prometheus
+      - cadvisor
 
   prometheus:
     build: ./services/monitoring/prometheus
@@ -166,9 +159,12 @@ services:
     volumes:
       - logstash-data:/usr/share/logstash/data
       - ./services/logs-management/logstash/pipelines:/usr/share/logstash/pipeline:ro
+      - ./services/logs-management/logstash/certs/logstash.crt:/etc/logstash/logstash.crt:ro
+      - ./services/logs-management/logstash/certs/logstash.key:/etc/logstash/logstash.key:ro
     depends_on:
       - elasticsearch
       - kibana
+      - vault
 
   kibana:
     build: ./services/logs-management/kibana

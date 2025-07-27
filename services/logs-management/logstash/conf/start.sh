@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Set Vault environment variables
+export VAULT_ADDR=https://vault:8200
+export VAULT_SKIP_VERIFY=true              # Self-signed certificates require this
+export HOME=/tmp
+
+# Wait for Vault to be unsealed
+echo "Waiting for Vault to be unsealed..."
+until curl -s --insecure "$VAULT_ADDR/v1/sys/seal-status" | jq -e '.sealed == false' > /dev/null; do
+  echo "Vault is still sealed... waiting 2 seconds"
+  sleep 2
+done
+echo "Vault is unsealed."
+
+# Login to Vault using the client certificate
+echo "Waiting for Vault cert-auth to be ready..."
+until VAULT_TOKEN=$(vault login -method=cert \
+    -client-cert=/etc/logstash/logstash.crt \
+    -client-key=/etc/logstash/logstash.key \
+    -format=json | jq -r .auth.client_token); do
+  echo "Vault login failed (permission denied)... waiting..."
+  sleep 2
+done
+
+# Get the Elastic password from Vault
+until ELASTIC_PASSWORD=$(vault kv get -field=elastic_password secret/elasticsearch); do
+  echo "Failed to retrieve Logstash service token from Vault... waiting..."
+  sleep 2
+done
+
+## Logstash KEYSTORE
+# Keystore password
+export LOGSTASH_KEYSTORE_PASS="$(openssl rand -base64 32)"
+
+# Store keystore password in vault
+echo "Storing Logstash keystore password in Vault..."
+until vault kv put secret/logstash logstash_keystore_password="$LOGSTASH_KEYSTORE_PASS"; do
+  echo "Failed to store Logstash keystore password in Vault... waiting..."
+  sleep 2
+done
+
+# Create Logstash keystore if it doesn't exist
+if [ ! -f /usr/share/logstash/config/logstash.keystore ]; then
+  echo "Creating Logstash keystore..."
+  /usr/share/logstash/bin/logstash-keystore create
+fi
+
+# Add Logstash password to the keystore
+echo "Adding Logstash password to the keystore..."
+/usr/share/logstash/bin/logstash-keystore add ELASTIC_PASSWORD <<< "$ELASTIC_PASSWORD"
+
+/usr/share/logstash/bin/logstash
