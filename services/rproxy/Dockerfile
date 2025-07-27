@@ -8,6 +8,13 @@ RUN dnf -y update && \
     dnf -y install httpd mod_ssl mod_security wget && \
     dnf clean all
 
+# Add GPG key for Filebeat
+COPY conf/elastic.repo /etc/yum.repos.d/elastic.repo
+# Install Filebeat
+RUN rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+RUN dnf install -y --enablerepo=elastic filebeat && \
+    dnf clean all
+
 # openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout rproxy.key -out rproxy.crt -config rproxy_openssl.cnf -extensions v3_req
 COPY certs/ /etc/pki/tls/certs/
 
