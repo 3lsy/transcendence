@@ -148,6 +148,7 @@ services:
       - elasticsearch-data:/usr/share/elasticsearch/data
       - ./services/logs-management/elasticsearch/certs/elasticsearch.key:/etc/elasticsearch/elasticsearch.key:ro
       - ./services/logs-management/elasticsearch/certs/elasticsearch.crt:/etc/elasticsearch/elasticsearch.crt:ro
+      - ./services/logs-management/elasticsearch/certs/elasticsearch.p12:/etc/elasticsearch/elasticsearch.p12:ro
     depends_on:
       - vault
 
@@ -181,6 +182,8 @@ services:
       - "5601:5601"  # Kibana web interface
     volumes:
       - kibana-data:/usr/share/kibana/data
+      - ./services/logs-management/kibana/certs/kibana.crt:/etc/kibana/kibana.crt:ro
+      - ./services/logs-management/kibana/certs/kibana.key:/etc/kibana/kibana.key:ro
     depends_on:
       - elasticsearch
       - vault
