@@ -56,8 +56,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "3000:3000"  # Grafana web interface
+    #ports:
+    #  - "3000:3000"  # Grafana web interface
     volumes:
       - grafana-data:/var/lib/grafana
       - ./services/monitoring/grafana/conf/cAdvisor.json:/var/lib/grafana/dashboards/cAdvisor.json:ro
@@ -76,8 +76,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "9090:9090"  # Prometheus web interface
+    #ports:
+    #  - "9090:9090"  # Prometheus web interface
     volumes:
       - prometheus-data:/prometheus
       - ./services/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
@@ -91,8 +91,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "8080:8080"
+    #ports:
+    #  - "8080:8080"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -107,8 +107,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "8200:8200"
+    #ports:
+    #  - "8200:8200"
     volumes:
       - vault-data:/vault/data
       - ./services/vault/conf/config.hcl:/vault/config/config.hcl:ro
@@ -154,7 +154,7 @@ services:
     networks:
       - transcendence-network
     ports:
-      - "5044:5044"  # Logstash Beats input
+    #  - "5044:5044"  # Logstash Filebeats input
       - "9600:9600"  # Logstash monitoring API
     volumes:
       - logstash-data:/usr/share/logstash/data
@@ -174,8 +174,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "5601:5601"  # Kibana web interface
+    #ports:
+    #  - "5601:5601"  # Kibana web interface
     volumes:
       - kibana-data:/usr/share/kibana/data
       - ./services/logs-management/kibana/certs/kibana.crt:/etc/kibana/kibana.crt:ro

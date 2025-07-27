@@ -1,0 +1,58 @@
+filebeat.inputs:
+  # Apache Access Logs
+  - type: filestream
+    id: apache-access
+    enabled: true
+    paths:
+      - /var/log/httpd/access_log
+    prospector.scanner.fingerprint.length: 64  # Lower to allow small file tracking
+    prospector.scanner.fingerprint.offset: 0
+    ignore_older: 0s  # Always check for updates
+    fields:
+      service: apache
+      log_type: access
+
+  # Apache Error Logs
+  - type: filestream
+    id: apache-error
+    enabled: true
+    paths:
+      - /var/log/httpd/error_log
+    prospector.scanner.fingerprint.length: 64
+    prospector.scanner.fingerprint.offset: 0
+    ignore_older: 0s
+    fields:
+      service: apache
+      log_type: error
+
+  # ModSecurity Audit Logs
+  - type: filestream
+    id: modsec-audit
+    enabled: true
+    paths:
+      - /var/log/httpd/modsec_audit.log
+    prospector.scanner.fingerprint.length: 64
+    prospector.scanner.fingerprint.offset: 0
+    ignore_older: 0s
+    fields:
+      service: modsecurity
+      log_type: audit
+
+# Disable Filebeat modules to avoid the error about missing filesets
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  enabled: false
+
+# Send logs to Logstash
+output.logstash:
+  hosts: ["logstash:5044"]
+  ssl:
+    enabled: true
+    verification_mode: none
+    verify: false
+
+# Flatten field structure
+fields_under_root: true
+
+# Optional for debugging
+logging.level: info
