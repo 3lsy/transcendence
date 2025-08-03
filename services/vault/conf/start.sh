@@ -5,6 +5,13 @@ export VAULT_SKIP_VERIFY=true              # Self-signed certificates require th
 
 INIT_FILE="/vault/data/init.json"
 
+# INIT_FILE exists to check if Vault has been initialized
+if [ ! -f "$INIT_FILE" ]; then
+  FIRST_TIME_SETUP=true
+else
+  FIRST_TIME_SETUP=false
+fi
+
 vault server -config=/vault/config/config.hcl &
 
 # Wait for Vault to be ready
@@ -44,45 +51,53 @@ else
   exit 1
 fi
 
-# Vault non-interactive login
-export VAULT_TOKEN="$ROOT_TOKEN"
+if [ "$FIRST_TIME_SETUP" = true ]; then
+  echo "First time setup for Vault..."
 
-# Enable the KV secrets engine
-vault secrets enable -path=secret kv-v2
+  # Vault non-interactive login
+  export VAULT_TOKEN="$ROOT_TOKEN"
 
-## Client Policies
-vault policy write grafana-policy /vault/policies/grafana-policy.hcl
-vault policy write elastic-policy /vault/policies/elastic-policy.hcl
+  # Enable the KV secrets engine
+  vault secrets enable -path=secret kv-v2
 
-## Client Cert Authentication Method
-vault auth enable cert
+  ## Client Policies
+  vault policy write grafana-policy /vault/policies/grafana-policy.hcl
+  vault policy write elastic-policy /vault/policies/elastic-policy.hcl
 
-## Grafana Client Certificate
-vault write auth/cert/certs/grafana-cert \
-  display_name="grafana" \
-  policies=grafana-policy \
-  certificate=@/vault/certs/grafana.crt \
-  ttl=24h
+  ## Client Cert Authentication Method
+  vault auth enable cert
 
-## Elasticsearch Client Certificate
-vault write auth/cert/certs/elasticsearch-cert \
-  display_name="elastic" \
-  policies=elastic-policy \
-  certificate=@/vault/certs/elasticsearch.crt \
-  ttl=24h
+  ## Grafana Client Certificate
+  vault write auth/cert/certs/grafana-cert \
+    display_name="grafana" \
+    policies=grafana-policy \
+    certificate=@/vault/certs/grafana.crt \
+    ttl=24h
 
-## Kibana Client Certificate
-vault write auth/cert/certs/kibana-cert \
-  display_name="elastic" \
-  policies=elastic-policy \
-  certificate=@/vault/certs/kibana.crt \
-  ttl=24h
+  ## Elasticsearch Client Certificate
+  vault write auth/cert/certs/elasticsearch-cert \
+    display_name="elastic" \
+    policies=elastic-policy \
+    certificate=@/vault/certs/elasticsearch.crt \
+    ttl=24h
 
-## Kibana Client Certificate
-vault write auth/cert/certs/logstash-cert \
-  display_name="elastic" \
-  policies=elastic-policy \
-  certificate=@/vault/certs/logstash.crt \
-  ttl=24h
+  ## Kibana Client Certificate
+  vault write auth/cert/certs/kibana-cert \
+    display_name="elastic" \
+    policies=elastic-policy \
+    certificate=@/vault/certs/kibana.crt \
+    ttl=24h
+
+  ## Kibana Client Certificate
+  vault write auth/cert/certs/logstash-cert \
+    display_name="elastic" \
+    policies=elastic-policy \
+    certificate=@/vault/certs/logstash.crt \
+    ttl=24h
+
+  echo "Vault first time setup completed."
+else
+  echo "Vault already initialized and unsealed. Skipping first time setup."
+fi
 
 wait

@@ -38,8 +38,7 @@ vault_cert_login()
     echo "Vault login failed (permission denied)... waiting..."
     sleep 2
   done
-
-  export VAULT_TOKEN=$(vault token lookup | jq -r .data.id)
+  export VAULT_TOKEN=$(vault token lookup -format=json | jq -r .data.id)
   echo "Vault login successful. Token: $VAULT_TOKEN"
 }
 
@@ -48,31 +47,57 @@ vault_cert_login()
 wait_for_vault_ready
 vault_cert_login "/etc/logstash/logstash.crt" "/etc/logstash/logstash.key"
 
-# Get the Elastic password from Vault
-until ELASTIC_PASSWORD=$(vault kv get -field=elastic_password secret/elasticsearch); do
-  echo "Failed to retrieve Logstash service token from Vault... waiting..."
-  sleep 2
-done
-
 ## Logstash KEYSTORE
-# Keystore password
-export LOGSTASH_KEYSTORE_PASS="$(openssl rand -base64 32)"
 
-# Store keystore password in vault
-echo "Storing Logstash keystore password in Vault..."
-until vault kv put secret/logstash logstash_keystore_password="$LOGSTASH_KEYSTORE_PASS"; do
-  echo "Failed to store Logstash keystore password in Vault... waiting..."
-  sleep 2
-done
-
-# Create Logstash keystore if it doesn't exist
+# Create Logstash keystore and store Elastic Password the First Time
 if [ ! -f /usr/share/logstash/config/logstash.keystore ]; then
+
+  # Get the Elastic password from Vault
+  until ELASTIC_PASSWORD=$(vault kv get -field=elastic_password secret/elasticsearch); do
+    echo "Failed to retrieve Logstash service token from Vault... waiting..."
+    sleep 2
+  done
+
+  # Keystore password
+  export LOGSTASH_KEYSTORE_PASS="$(openssl rand -base64 32)"
+
+  # Store keystore password in vault
+  echo "Storing Logstash keystore password in Vault..."
+  until vault kv put secret/logstash logstash_keystore_password="$LOGSTASH_KEYSTORE_PASS"; do
+    echo "Failed to store Logstash keystore password in Vault... waiting..."
+    sleep 2
+  done
+
   echo "Creating Logstash keystore..."
   /usr/share/logstash/bin/logstash-keystore create
+
+  # Add Logstash password to the keystore
+  echo "Adding Logstash password to the keystore..."
+  /usr/share/logstash/bin/logstash-keystore add ELASTIC_PASSWORD <<< "$ELASTIC_PASSWORD"
+
+else
+  echo "Logstash keystore already exists."
+  # Import keystore password from Vault
+  until LOGSTASH_KEYSTORE_PASS=$(vault kv get -field=logstash_keystore_password secret/logstash); do
+    echo "Failed to retrieve Logstash keystore password from Vault... waiting..."
+    sleep 2
+  done
+  export LOGSTASH_KEYSTORE_PASS
+  echo "Logstash keystore password retrieved from Vault."
+
+  # Enlist the contents of the keystore
+  echo "Listing Logstash keystore contents..."
+  /usr/share/logstash/bin/logstash-keystore list
+
+  # Get the Elastic password from Vault
+  until ELASTIC_PASSWORD=$(vault kv get -field=elastic_password secret/elasticsearch); do
+    echo "Failed to retrieve Elastic password from Vault... waiting..."
+    sleep 2
+  done
 fi
 
-# Add Logstash password to the keystore
-echo "Adding Logstash password to the keystore..."
-/usr/share/logstash/bin/logstash-keystore add ELASTIC_PASSWORD <<< "$ELASTIC_PASSWORD"
+# Print elastic password
+echo "Elastic Password for Logstash: $ELASTIC_PASSWORD"
+echo "Logstash keystore password: $LOGSTASH_KEYSTORE_PASS"
 
-/usr/share/logstash/bin/logstash
+exec /usr/share/logstash/bin/logstash
