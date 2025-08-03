@@ -38,7 +38,7 @@ vault_cert_login()
     sleep 2
   done
 
-  export VAULT_TOKEN=$(vault token lookup | jq -r .data.id)
+  export VAULT_TOKEN=$(vault token lookup -format=json | jq -r .data.id)
   echo "Vault login successful. Token: $VAULT_TOKEN"
 }
 
@@ -47,16 +47,31 @@ vault_cert_login()
 wait_for_vault_ready
 vault_cert_login "/etc/grafana/certs/grafana.crt" "/etc/grafana/certs/grafana.key"
 
-RAND=$(openssl rand -hex 16)
+# If the first time setup file doesn't exist, create it
+if [ ! -f /var/lib/grafana/grafana.setup ]; then
+  touch /var/lib/grafana/grafana.setup
+  echo "Grafana setup file created."
 
-# Store the Grafana admin password in Vault
-echo "Storing Grafana admin password in Vault..."
-until vault kv put secret/grafana admin_password="$RAND"; do
-  echo "Failed to store password in Vault... waiting..."
-  sleep 2
-done
+  RAND=$(openssl rand -hex 16)
 
-export GF_SECURITY_ADMIN_PASSWORD="$RAND"
+  # Store the Grafana admin password in Vault
+  echo "Storing Grafana admin password in Vault..."
+  until vault kv put secret/grafana admin_password="$RAND"; do
+    echo "Failed to store password in Vault... waiting..."
+    sleep 2
+  done
+
+  export GF_SECURITY_ADMIN_PASSWORD="$RAND"
+
+else
+  # Retrieve the Grafana admin password from Vault
+  until GF_SECURITY_ADMIN_PASSWORD=$(vault kv get -field=admin_password secret/grafana); do
+    echo "Failed to retrieve Grafana admin password from Vault... waiting..."
+    sleep 2
+  done
+  echo "Grafana admin password retrieved from Vault."
+  export GF_SECURITY_ADMIN_PASSWORD
+fi
 
 # Start Grafana
 /usr/sbin/grafana-server --homepath=/usr/share/grafana --config=/etc/grafana/grafana.ini

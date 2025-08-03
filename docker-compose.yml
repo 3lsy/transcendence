@@ -33,19 +33,26 @@ volumes:
       o: bind
       device: ./data/elasticsearch-data
   
-  logstash-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/logstash-data
-  
   kibana-data:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: ./data/kibana-data
+
+  logstash-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/logstash-data
+
+  logstash-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/logstash-config
 
 services:
   grafana:
@@ -126,6 +133,13 @@ services:
       - "443:443"
     volumes:
       - ./services/rproxy/conf/redirect.conf:/etc/httpd/conf.d/redirect.conf:ro
+    depends_on:
+      - grafana
+      - prometheus
+      - vault
+      - elasticsearch
+      - kibana
+      - logstash
 
   elasticsearch:
     build: ./services/logs-management/elasticsearch
@@ -136,34 +150,13 @@ services:
     networks:
       - transcendence-network
     ports:
-      - "9200:9200"  # Elasticsearch HTTP API
+      - "9200:9200"  # Elasticsearch API
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
       - ./services/logs-management/elasticsearch/certs/elasticsearch.key:/etc/elasticsearch/elasticsearch.key:ro
       - ./services/logs-management/elasticsearch/certs/elasticsearch.crt:/etc/elasticsearch/elasticsearch.crt:ro
       - ./services/logs-management/elasticsearch/certs/elasticsearch.p12:/etc/elasticsearch/elasticsearch.p12:ro
     depends_on:
-      - vault
-
-  logstash:
-    build: ./services/logs-management/logstash
-    image: logstash-tc
-    container_name: logstash
-    hostname: logstash
-    restart: unless-stopped
-    networks:
-      - transcendence-network
-    ports:
-    #  - "5044:5044"  # Logstash Filebeats input
-      - "9600:9600"  # Logstash monitoring API
-    volumes:
-      - logstash-data:/usr/share/logstash/data
-      - ./services/logs-management/logstash/pipelines:/usr/share/logstash/pipeline:ro
-      - ./services/logs-management/logstash/certs/logstash.crt:/etc/logstash/logstash.crt:ro
-      - ./services/logs-management/logstash/certs/logstash.key:/etc/logstash/logstash.key:ro
-    depends_on:
-      - elasticsearch
-      - kibana
       - vault
 
   kibana:
@@ -182,4 +175,26 @@ services:
       - ./services/logs-management/kibana/certs/kibana.key:/etc/kibana/kibana.key:ro
     depends_on:
       - elasticsearch
+      - vault
+
+  logstash:
+    build: ./services/logs-management/logstash
+    image: logstash-tc
+    container_name: logstash
+    hostname: logstash
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    #ports:
+    #  - "5044:5044"  # Logstash Filebeats input
+    #  - "9600:9600"  # Logstash monitoring API
+    volumes:
+      - logstash-data:/usr/share/logstash/data
+      - logstash-config:/usr/share/logstash/config
+      - ./services/logs-management/logstash/pipelines:/usr/share/logstash/pipeline:ro
+      - ./services/logs-management/logstash/certs/logstash.crt:/etc/logstash/logstash.crt:ro
+      - ./services/logs-management/logstash/certs/logstash.key:/etc/logstash/logstash.key:ro
+    depends_on:
+      - elasticsearch
+      - kibana
       - vault

@@ -48,7 +48,7 @@ vault_cert_login()
     sleep 2
   done
 
-  export VAULT_TOKEN=$(vault token lookup | jq -r .data.id)
+  export VAULT_TOKEN=$(vault token lookup -format=json | jq -r .data.id)
   echo "Vault login successful. Token: $VAULT_TOKEN"
 }
 
@@ -57,25 +57,34 @@ vault_cert_login()
 wait_for_vault_ready
 vault_cert_login "/etc/elasticsearch/elasticsearch.crt" "/etc/elasticsearch/elasticsearch.key"
 
-# Save Elasticsearch password non-interactively
-ELASTIC_PASSWORD=$(/usr/share/elasticsearch/bin/elasticsearch-reset-password --username elastic --auto --batch --silent)
+# Check if the first time setup has been done
+if [ ! -f /usr/share/elasticsearch/data/elasticsearch.setup ]; then
+  # Create the first time setup file
+  touch /usr/share/elasticsearch/data/elasticsearch.setup
 
-# Store the Elasticsearch user password in Vault
-echo "Storing Elasticsearch admin password in Vault..."
-until vault kv put secret/elasticsearch elastic_password="$ELASTIC_PASSWORD"; do
-  echo "Failed to store password in Vault... waiting..."
-  sleep 2
-done
+  # Reset Elasticsearch password non-interactively
+  ELASTIC_PASSWORD=$(/usr/share/elasticsearch/bin/elasticsearch-reset-password --username elastic --auto --batch --silent)
 
-# Kibana service user token
-KIBANA_TOKEN=$(/usr/share/elasticsearch/bin/elasticsearch-service-tokens create elastic/kibana kibana-token | awk -F' = ' '{print $2}')
+  # Store the Elasticsearch user password in Vault
+  echo "Storing Elasticsearch admin password in Vault..."
+  until vault kv put secret/elasticsearch elastic_password="$ELASTIC_PASSWORD"; do
+    echo "Failed to store password in Vault... waiting..."
+    sleep 2
+  done
 
-# Store the Kibana service user token in Vault
-echo "Storing Kibana service user token in Vault..."
-until vault kv put secret/kibana kibana_service_token="$KIBANA_TOKEN"; do
-  echo "Failed to store Kibana service token in Vault... waiting..."
-  sleep 2
-done
+  # Kibana service user token
+  KIBANA_TOKEN=$(/usr/share/elasticsearch/bin/elasticsearch-service-tokens create elastic/kibana kibana-token | awk -F' = ' '{print $2}')
+
+  # Store the Kibana service user token in Vault
+  echo "Storing Kibana service user token in Vault..."
+  until vault kv put secret/kibana kibana_service_token="$KIBANA_TOKEN"; do
+    echo "Failed to store Kibana service token in Vault... waiting..."
+    sleep 2
+  done
+
+else
+  echo "Elasticsearch setup file already exists. Skipping first time setup."
+fi
 
 # Bring Elasticsearch back to foreground
 wait

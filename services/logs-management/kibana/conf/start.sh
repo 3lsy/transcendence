@@ -39,7 +39,7 @@ vault_cert_login()
     sleep 2
   done
 
-  export VAULT_TOKEN=$(vault token lookup | jq -r .data.id)
+  export VAULT_TOKEN=$(vault token lookup -format=json | jq -r .data.id)
   echo "Vault login successful. Token: $VAULT_TOKEN"
 }
 
@@ -54,15 +54,23 @@ until KIBANA_TOKEN=$(vault kv get -field=kibana_service_token secret/kibana); do
   sleep 2
 done
 
-# Add token to Kibana configuration
-echo "Storing Kibana service user token in configuration..."
+# If the flag file for setup don't exist, create it
+if [ ! -f /usr/share/kibana/config/kibana.setup ]; then
+  touch /usr/share/kibana/config/kibana.setup
+  echo "Kibana setup file created."
 
-{
-  echo "elasticsearch.serviceAccountToken: \"$KIBANA_TOKEN\""
-  echo "xpack.security.encryptionKey: \"$(openssl rand -base64 32)\""
-  echo "xpack.encryptedSavedObjects.encryptionKey: \"$(openssl rand -base64 32)\""
-  echo "xpack.reporting.encryptionKey: \"$(openssl rand -base64 32)\""
-} | tee -a /etc/kibana/kibana.yml
+  # Add token to Kibana configuration
+  echo "Storing Kibana service user token in configuration..."
+
+  {
+    echo "elasticsearch.serviceAccountToken: \"$KIBANA_TOKEN\""
+    echo "xpack.security.encryptionKey: \"$(openssl rand -base64 32)\""
+    echo "xpack.encryptedSavedObjects.encryptionKey: \"$(openssl rand -base64 32)\""
+    echo "xpack.reporting.encryptionKey: \"$(openssl rand -base64 32)\""
+  } | tee -a /etc/kibana/kibana.yml
+else
+  echo "Kibana setup file already exists. Skipping setup."
+fi
 
 # Start Kibana
 /usr/share/kibana/bin/kibana
