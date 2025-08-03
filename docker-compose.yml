@@ -33,13 +33,6 @@ volumes:
       o: bind
       device: ./data/elasticsearch-data
   
-  logstash-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data/logstash-data
-  
   kibana-data:
     driver: local
     driver_opts:
@@ -47,15 +40,21 @@ volumes:
       o: bind
       device: ./data/kibana-data
 
+  logstash-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/logstash-data
+
+  logstash-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/logstash-config
+
 services:
-  # frontend:
-  #   build: ./services/frontend
-  #   image: frontend-tc
-  #   container_name: frontend
-  #   hostname: frontend
-  #   restart: unless-stopped
-  #   networks:
-  #     - transcendence-network
   grafana:
     build: ./services/monitoring/grafana
     image: grafana-tc
@@ -64,8 +63,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "3000:3000"  # Grafana web interface
+    #ports:
+    #  - "3000:3000"  # Grafana web interface
     volumes:
       - grafana-data:/var/lib/grafana
       - ./services/monitoring/grafana/conf/cAdvisor.json:/var/lib/grafana/dashboards/cAdvisor.json:ro
@@ -74,6 +73,7 @@ services:
     depends_on:
       - vault
       - prometheus
+      - cadvisor
 
   prometheus:
     build: ./services/monitoring/prometheus
@@ -83,8 +83,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "9090:9090"  # Prometheus web interface
+    #ports:
+    #  - "9090:9090"  # Prometheus web interface
     volumes:
       - prometheus-data:/prometheus
       - ./services/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
@@ -98,8 +98,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "8080:8080"
+    #ports:
+    #  - "8080:8080"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -114,8 +114,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "8200:8200"
+    #ports:
+    #  - "8200:8200"
     volumes:
       - vault-data:/vault/data
       - ./services/vault/conf/config.hcl:/vault/config/config.hcl:ro
@@ -133,6 +133,13 @@ services:
       - "443:443"
     volumes:
       - ./services/rproxy/conf/redirect.conf:/etc/httpd/conf.d/redirect.conf:ro
+    depends_on:
+      - grafana
+      - prometheus
+      - vault
+      - elasticsearch
+      - kibana
+      - logstash
 
   elasticsearch:
     build: ./services/logs-management/elasticsearch
@@ -143,13 +150,31 @@ services:
     networks:
       - transcendence-network
     ports:
-      - "9200:9200"  # Elasticsearch HTTP API
+      - "9200:9200"  # Elasticsearch API
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
       - ./services/logs-management/elasticsearch/certs/elasticsearch.key:/etc/elasticsearch/elasticsearch.key:ro
       - ./services/logs-management/elasticsearch/certs/elasticsearch.crt:/etc/elasticsearch/elasticsearch.crt:ro
       - ./services/logs-management/elasticsearch/certs/elasticsearch.p12:/etc/elasticsearch/elasticsearch.p12:ro
     depends_on:
+      - vault
+
+  kibana:
+    build: ./services/logs-management/kibana
+    image: kibana-tc
+    container_name: kibana
+    hostname: kibana
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    #ports:
+    #  - "5601:5601"  # Kibana web interface
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+      - ./services/logs-management/kibana/certs/kibana.crt:/etc/kibana/kibana.crt:ro
+      - ./services/logs-management/kibana/certs/kibana.key:/etc/kibana/kibana.key:ro
+    depends_on:
+      - elasticsearch
       - vault
 
   logstash:
@@ -160,30 +185,16 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "5044:5044"  # Logstash Beats input
-      - "9600:9600"  # Logstash monitoring API
+    #ports:
+    #  - "5044:5044"  # Logstash Filebeats input
+    #  - "9600:9600"  # Logstash monitoring API
     volumes:
       - logstash-data:/usr/share/logstash/data
+      - logstash-config:/usr/share/logstash/config
       - ./services/logs-management/logstash/pipelines:/usr/share/logstash/pipeline:ro
+      - ./services/logs-management/logstash/certs/logstash.crt:/etc/logstash/logstash.crt:ro
+      - ./services/logs-management/logstash/certs/logstash.key:/etc/logstash/logstash.key:ro
     depends_on:
       - elasticsearch
       - kibana
-
-  kibana:
-    build: ./services/logs-management/kibana
-    image: kibana-tc
-    container_name: kibana
-    hostname: kibana
-    restart: unless-stopped
-    networks:
-      - transcendence-network
-    ports:
-      - "5601:5601"  # Kibana web interface
-    volumes:
-      - kibana-data:/usr/share/kibana/data
-      - ./services/logs-management/kibana/certs/kibana.crt:/etc/kibana/kibana.crt:ro
-      - ./services/logs-management/kibana/certs/kibana.key:/etc/kibana/kibana.key:ro
-    depends_on:
-      - elasticsearch
       - vault

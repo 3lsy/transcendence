@@ -9,3 +9,4 @@ elasticsearch.ssl.verificationMode: none
 
 # Connect to Elasticsearch over HTTPS
 elasticsearch.hosts: ["https://elasticsearch:9200"]
+server.publicBaseUrl: "https://elastic.localhost"

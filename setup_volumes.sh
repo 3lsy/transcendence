@@ -16,6 +16,7 @@ declare -A volumes=(
     [elasticsearch-data]="999:999"
     [kibana-data]="999:999"
     [logstash-data]="999:999"
+    [logstash-config]="999:999"
 )
 
 mkdir -p data/
