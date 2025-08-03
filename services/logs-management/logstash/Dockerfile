@@ -9,13 +9,22 @@ COPY conf/logstash.repo /etc/yum.repos.d/logstash.repo
 RUN dnf install -y --enablerepo=logstash logstash && \
     dnf clean all
 
+# Install HashiCorp Vault
+RUN dnf -y install dnf-plugins-core jq \
+    && dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo \
+    && dnf -y install vault \
+    && dnf clean all
+
 COPY conf/logstash.yml /usr/share/logstash/config/logstash.yml
 COPY conf/pipelines.yml /usr/share/logstash/config/pipelines.yml
 
-RUN chown -R logstash:logstash /etc/logstash /var/lib/logstash /usr/share/logstash
+RUN chown -R logstash:logstash /etc/logstash /var/lib/logstash /usr/share/logstash /usr/bin/vault
+
+COPY conf/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
 USER logstash
 
 ENV ES_JAVA_OPTS="-Xms1g -Xmx1g"
 
-CMD ["/usr/share/logstash/bin/logstash"]
+CMD ["/usr/local/bin/start.sh"]
