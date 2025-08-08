@@ -55,6 +55,31 @@ volumes:
       device: ./data/logstash-config
 
 services:
+
+  backend:
+    build: ./services/website/backend
+    image: backend-tc
+    container_name: backend
+    hostname: backend
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "3600:3600"  # Backend API
+
+  frontend:
+    build: ./services/website/frontend
+    image: frontend-tc
+    container_name: frontend
+    hostname: frontend
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "4173:4173"  # Frontend web interface
+    depends_on:
+      - backend
+  
   grafana:
     build: ./services/monitoring/grafana
     image: grafana-tc
