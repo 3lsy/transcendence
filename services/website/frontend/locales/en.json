@@ -1,0 +1,31 @@
+{
+  "home": { "title": "PONG" },
+  "btn": {
+    "play": { "top": "PLAY", "bottom": "GAME" },
+    "tournament": { "top": "TOURNAMENT", "bottom": "" },
+    "scores": { "top": "HIGH", "bottom": "SCORES" },
+    "start": { "top": "START", "bottom": "GAME" },
+    "startTournament": { "top": "START", "bottom": "TOURNAMENT" },
+    "back": { "top": "BACK", "bottom": "MENU" },
+    "home": { "top": "HOME", "bottom": "MENU" },
+    "quit": { "top": "QUIT", "bottom": "GAME" },
+    "restart": { "top": "RESTART", "bottom": "GAME" },
+    "clear": { "top": "CLEAR", "bottom": "SCORES" }
+  },
+  "common": { "remove": "Remove" },
+  "game": {
+    "title": "GAME",
+    "alias": "Alias",
+    "controls": "Controls: Left = W/S, Right = ↑/↓ · First to {target} wins",
+    "win": "{name} wins!"
+    },
+  "tournament": {
+    "title": "TOURNAMENT",
+    "numberOfPlayers": "Number of Players",
+    "firstRound": "First round order"
+  },
+  "scores": {
+    "title": "HIGH SCORES",
+    "empty": "No scores yet"
+  }
+}

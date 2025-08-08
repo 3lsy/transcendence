@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Large stacked, rounded, uppercase outline button (home & primary CTAs) */
+.btn-menu {
+  @apply grid place-items-center rounded-xl border-2 border-slate-300 text-slate-200 uppercase tracking-[0.20em] hover:bg-white/5 transition;
+  @apply w-[320px] md:w-[380px] h-[90px] px-6 text-center;
+}
+.btn-menu-inner { @apply leading-tight text-2xl; }
+
+/* Smaller variant for dialogs/secondary placements (restart/home/back/clear) */
+.btn-menu-sm {
+  @apply w-[200px] md:w-[240px] h-[70px];
+}
+.btn-menu-sm .btn-menu-inner { @apply text-xl; }
