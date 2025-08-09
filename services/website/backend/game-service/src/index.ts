@@ -1,18 +1,16 @@
 import Fastify from 'fastify';
 import wsPlugin from '@fastify/websocket';
+import { PongGame } from './game';
+import { registerRoutes } from './routes';
+import { registerWebsocket } from './websocket';
 
 const fastify = Fastify({ logger: true });
 fastify.register(wsPlugin);
 
-fastify.get('/', { websocket: true }, (connection) => {
-  console.log('WS connected to Game Service');
-  connection.socket.on('message', (msg: Buffer | string) => {
-    console.log('Message:', msg.toString());
-    connection.socket.send(JSON.stringify({ type: 'pong', message: 'Hello from Game Service' }));
-  });
-});
+const game = new PongGame();
 
-fastify.get('/health', async () => ({ status: 'Game Service OK' }));
+registerRoutes(fastify, game);
+registerWebsocket(fastify, game);
 
 const startGameService = async () => {
   try {
