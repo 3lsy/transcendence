@@ -17,7 +17,7 @@ setInterval(async () => {
     await game.update();
 
     // Broadcast updated state to clients connected to this match
-    // You'll implement this in your websocket logic to broadcast to the right clients
+    // Websocket logic to broadcast to the right clients
   }
 }, TICK_RATE);
 
