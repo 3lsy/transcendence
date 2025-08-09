@@ -9,7 +9,7 @@ fastify.post('/start', async (req) => {
 
 fastify.get('/health', async () => ({ status: 'Tournament Service OK' }));
 
-export const startTournamentService = async () => {
+const startTournamentService = async () => {
   try {
     await fastify.listen({ port: 3603, host: '0.0.0.0' });
     console.log('Tournament Service running on http://localhost:3603');
@@ -18,3 +18,5 @@ export const startTournamentService = async () => {
     process.exit(1);
   }
 };
+
+startTournamentService();
