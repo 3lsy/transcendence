@@ -1,18 +1,28 @@
 import Fastify from 'fastify';
 import wsPlugin from '@fastify/websocket';
+import { PongGame } from './game';
+import { registerRoutes } from './routes';
+import { registerWebsocket } from './websocket';
 
 const fastify = Fastify({ logger: true });
 fastify.register(wsPlugin);
 
-fastify.get('/', { websocket: true }, (connection) => {
-  console.log('WS connected to Game Service');
-  connection.socket.on('message', (msg: Buffer | string) => {
-    console.log('Message:', msg.toString());
-    connection.socket.send(JSON.stringify({ type: 'pong', message: 'Hello from Game Service' }));
-  });
-});
+// Store all active games by matchId
+const games = new Map<string, PongGame>();
 
-fastify.get('/health', async () => ({ status: 'Game Service OK' }));
+const TICK_RATE = 1000 / 60; // 60 FPS
+
+setInterval(async () => {
+  for (const [matchId, game] of games.entries()) {
+    await game.update();
+
+    // Broadcast updated state to clients connected to this match
+    // You'll implement this in your websocket logic to broadcast to the right clients
+  }
+}, TICK_RATE);
+
+registerRoutes(fastify, games);
+registerWebsocket(fastify, games);
 
 const startGameService = async () => {
   try {
