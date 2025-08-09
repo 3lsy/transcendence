@@ -14,7 +14,7 @@ fastify.get('/', { websocket: true }, (connection) => {
 
 fastify.get('/health', async () => ({ status: 'Game Service OK' }));
 
-export const startGameService = async () => {
+const startGameService = async () => {
   try {
     await fastify.listen({ port: 3601, host: '0.0.0.0' });
     console.log('Game Service running on http://localhost:3601');
@@ -23,3 +23,5 @@ export const startGameService = async () => {
     process.exit(1);
   }
 };
+
+startGameService();
