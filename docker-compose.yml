@@ -58,25 +58,6 @@ services:
 
   # Backend Microservices
 
-  api-gateway:
-    image: nginx:1.29
-    container_name: api-gateway
-    hostname: api-gateway
-    restart: unless-stopped
-    networks:
-      - transcendence-network
-    # ports:
-      # - "8880:80" # HTTP Redirect
-      # - "8443:443" # HTTPS
-    volumes:
-      - ./services/website/backend/api-gateway/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./services/website/backend/api-gateway/api-gateway.crt:/etc/nginx/ssl/api-gateway.crt:ro
-      - ./services/website/backend/api-gateway/api-gateway.key:/etc/nginx/ssl/api-gateway.key:ro
-    depends_on:
-      - game-service
-      - scoreboard-service
-      - tournament-service
-
   game-service:
     build: ./services/website/backend/game-service
     image: game-service-tc
@@ -121,7 +102,7 @@ services:
     ports:
       - "4173:4173"  # Frontend web interface
     depends_on:
-      - api-gateway
+      - rproxy
       - game-service
       - scoreboard-service
       - tournament-service
@@ -211,6 +192,9 @@ services:
       - elasticsearch
       - kibana
       - logstash
+      - game-service
+      - scoreboard-service
+      - tournament-service
 
   elasticsearch:
     build: ./services/logs-management/elasticsearch
