@@ -186,12 +186,12 @@ services:
     volumes:
       - ./services/rproxy/conf/redirect.conf:/etc/httpd/conf.d/redirect.conf:ro
     depends_on:
-      - grafana
-      - prometheus
-      - vault
-      - elasticsearch
-      - kibana
-      - logstash
+      # - grafana
+      # - prometheus
+      # - vault
+      # - elasticsearch
+      # - kibana
+      # - logstash
       - game-service
       - scoreboard-service
       - tournament-service

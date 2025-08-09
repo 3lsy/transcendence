@@ -9,22 +9,52 @@ import { PongGame } from './game';
 // - POST /move: Move paddle up or down
 // - GET /state: Get the current game state
 
-export function registerRoutes(fastify: FastifyInstance, game: PongGame) {
+export function registerRoutes(fastify: FastifyInstance, games: Map<string, PongGame>) {
   fastify.get('/health', async () => ({ status: 'Game Service OK' }));
 
-  fastify.post('/join', async (req, reply) => {
-    const { alias } = req.body as { alias: string };
-    if (!alias) return reply.code(400).send({ error: 'Alias required' });
+  // Join a match
+  fastify.post<{ Body: { matchId: string; alias: string } }>('/join', async (req, reply) => {
+    const { matchId, alias } = req.body;
+    if (!matchId || !alias) {
+      return reply.code(400).send({ error: 'matchId and alias are required' });
+    }
+
+    let game = games.get(matchId);
+    if (!game) {
+      game = new PongGame(matchId);
+      games.set(matchId, game);
+    }
+
     const side = game.addPlayer(alias);
-    if (!side) return reply.code(403).send({ error: 'Game full' });
+    if (!side) {
+      return reply.code(403).send({ error: 'Game full' });
+    }
+
     return { side };
   });
 
-  fastify.post('/move', async (req, reply) => {
-    const { side, dy } = req.body as { side: 'left' | 'right'; dy: number };
+  // Move paddle
+  fastify.post<{ Body: { matchId: string; side: 'left' | 'right'; dy: number } }>('/move', async (req, reply) => {
+    const { matchId, side, dy } = req.body;
+    const game = games.get(matchId);
+
+    if (!game) {
+      return reply.code(404).send({ error: 'Match not found' });
+    }
+
     game.movePaddle(side, dy);
     return { ok: true };
   });
 
-  fastify.get('/state', async () => game.getState());
+  // Get current game state
+  fastify.get<{ Querystring: { matchId: string } }>('/state', async (req, reply) => {
+    const { matchId } = req.query;
+    const game = games.get(matchId);
+
+    if (!game) {
+      return reply.code(404).send({ error: 'Match not found' });
+    }
+
+    return game.getState();
+  });
 }

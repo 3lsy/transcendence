@@ -7,10 +7,22 @@ import { registerWebsocket } from './websocket';
 const fastify = Fastify({ logger: true });
 fastify.register(wsPlugin);
 
-const game = new PongGame();
+// Store all active games by matchId
+const games = new Map<string, PongGame>();
 
-registerRoutes(fastify, game);
-registerWebsocket(fastify, game);
+const TICK_RATE = 1000 / 60; // 60 FPS
+
+setInterval(async () => {
+  for (const [matchId, game] of games.entries()) {
+    await game.update();
+
+    // Broadcast updated state to clients connected to this match
+    // You'll implement this in your websocket logic to broadcast to the right clients
+  }
+}, TICK_RATE);
+
+registerRoutes(fastify, games);
+registerWebsocket(fastify, games);
 
 const startGameService = async () => {
   try {
