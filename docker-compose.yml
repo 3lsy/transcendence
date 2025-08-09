@@ -56,17 +56,60 @@ volumes:
 
 services:
 
-  backend:
-    build: ./services/website/backend
-    image: backend-tc
-    container_name: backend
-    hostname: backend
+  # Backend Microservices
+
+  api-gateway:
+    image: nginx:1.29
+    container_name: api-gateway
+    hostname: api-gateway
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    # ports:
+      # - "8880:80" # HTTP Redirect
+      # - "8443:443" # HTTPS
+    volumes:
+      - ./services/website/backend/api-gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./services/website/backend/api-gateway/api-gateway.crt:/etc/nginx/ssl/api-gateway.crt:ro
+      - ./services/website/backend/api-gateway/api-gateway.key:/etc/nginx/ssl/api-gateway.key:ro
+    depends_on:
+      - game-service
+      - scoreboard-service
+      - tournament-service
+
+  game-service:
+    build: ./services/website/backend/game-service
+    image: game-service-tc
+    container_name: game-service
+    hostname: game-service
     restart: unless-stopped
     networks:
       - transcendence-network
     ports:
-      - "3600:3600"  # Backend API
+      - "3601:3601"  # Game service API
 
+  scoreboard-service:
+    build: ./services/website/backend/scoreboard-service
+    image: scoreboard-service-tc
+    container_name: scoreboard-service
+    hostname: scoreboard-service
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "3602:3602"  # Scoreboard service API
+
+  tournament-service:
+    build: ./services/website/backend/tournament-service
+    image: tournament-service-tc
+    container_name: tournament-service
+    hostname: tournament-service
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    ports:
+      - "3603:3603"  # Tournament service API
+  
   frontend:
     build: ./services/website/frontend
     image: frontend-tc
@@ -78,7 +121,10 @@ services:
     ports:
       - "4173:4173"  # Frontend web interface
     depends_on:
-      - backend
+      - api-gateway
+      - game-service
+      - scoreboard-service
+      - tournament-service
   
   grafana:
     build: ./services/monitoring/grafana

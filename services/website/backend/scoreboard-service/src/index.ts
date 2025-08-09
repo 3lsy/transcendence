@@ -51,7 +51,7 @@ fastify.post('/', async (req, reply) => {
 
 fastify.get('/health', async () => ({ status: 'Scoreboard Service OK' }));
 
-export const startScoreboardService = async () => {
+const startScoreboardService = async () => {
   try {
     await initDb();
     await fastify.listen({ port: 3602, host: '0.0.0.0' });
@@ -61,3 +61,5 @@ export const startScoreboardService = async () => {
     process.exit(1);
   }
 };
+
+startScoreboardService();

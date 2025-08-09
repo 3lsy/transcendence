@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                  // Good modern target for Node.js 18+
+    "module": "commonjs",                // Fastify works fine here
+    "rootDir": "./src",                  // Your TS source files
+    "outDir": "./dist",                  // Compiled JS output
+    "esModuleInterop": true,             // Makes import/export easier
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "sourceMap": true
+  },
+  "include": ["src/**/*.ts"],            // Compile all TS files in src
+  "exclude": ["node_modules", "dist"]    // Ignore output + deps
+}
