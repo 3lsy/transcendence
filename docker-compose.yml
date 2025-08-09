@@ -102,7 +102,6 @@ services:
     ports:
       - "4173:4173"  # Frontend web interface
     depends_on:
-      # - api-gateway
       - rproxy
       - game-service
       - scoreboard-service
