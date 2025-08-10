@@ -100,7 +100,7 @@ services:
     networks:
       - transcendence-network
     ports:
-      - "4173:4173"  # Frontend web interface
+      - "3000:80"  # Frontend web interface
     depends_on:
       - rproxy
       - game-service
