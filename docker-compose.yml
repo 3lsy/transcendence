@@ -99,10 +99,9 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "3000:80"  # Frontend web interface
+    # ports:
+    #   - "3000:80"  # Frontend web interface
     depends_on:
-      - rproxy
       - game-service
       - scoreboard-service
       - tournament-service
@@ -192,6 +191,7 @@ services:
       # - elasticsearch
       # - kibana
       # - logstash
+      - frontend
       - game-service
       - scoreboard-service
       - tournament-service
