@@ -16,5 +16,8 @@
     "rimraf": "^6.0.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.9.2"
+  },
+  "overrides": {
+    "lws-rewrite": "https://github.com/lozercaustic/rewrite#feat/ws"
   }
 }
