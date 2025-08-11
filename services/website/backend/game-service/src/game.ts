@@ -195,6 +195,7 @@ export class PongGame {
       ball: this.ball,
       players: this.players,
       scores: this.scores,
+      target: this.winningScore,
     };
   }
 

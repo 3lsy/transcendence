@@ -8,6 +8,7 @@ RUN npm run build
 
 FROM node:24-alpine
 ENV TZ=Europe/Paris
+ENV NODE_ENV=production
 RUN apk add --no-cache tzdata
 WORKDIR /app
 COPY --from=builder /app/package*.json ./

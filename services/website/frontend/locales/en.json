@@ -1,24 +1,69 @@
 {
-  "home": { "title": "PONG" },
-  "btn": {
-    "play": { "top": "PLAY", "bottom": "GAME" },
-    "tournament": { "top": "TOURNAMENT", "bottom": "" },
-    "scores": { "top": "HIGH", "bottom": "SCORES" },
-    "start": { "top": "START", "bottom": "GAME" },
-    "startTournament": { "top": "START", "bottom": "TOURNAMENT" },
-    "back": { "top": "BACK", "bottom": "MENU" },
-    "home": { "top": "HOME", "bottom": "MENU" },
-    "quit": { "top": "QUIT", "bottom": "GAME" },
-    "restart": { "top": "RESTART", "bottom": "GAME" },
-    "clear": { "top": "CLEAR", "bottom": "SCORES" }
+  "home": {
+    "title": "PONG"
   },
-  "common": { "remove": "Remove" },
+  "btn": {
+    "play": {
+      "top": "PLAY",
+      "bottom": "GAME"
+    },
+    "tournament": {
+      "top": "TOURNAMENT",
+      "bottom": ""
+    },
+    "scores": {
+      "top": "HIGH",
+      "bottom": "SCORES"
+    },
+    "start": {
+      "top": "START",
+      "bottom": "GAME"
+    },
+    "startTournament": {
+      "top": "START",
+      "bottom": "TOURNAMENT"
+    },
+    "back": {
+      "top": "BACK",
+      "bottom": "MENU"
+    },
+    "home": {
+      "top": "HOME",
+      "bottom": "MENU"
+    },
+    "quit": {
+      "top": "QUIT",
+      "bottom": "GAME"
+    },
+    "restart": {
+      "top": "RESTART",
+      "bottom": "GAME"
+    },
+    "clear": {
+      "top": "CLEAR",
+      "bottom": "SCORES"
+    }
+  },
+  "common": {
+    "remove": "Remove"
+  },
   "game": {
     "title": "GAME",
     "alias": "Alias",
     "controls": "Controls: Left = W/S, Right = ↑/↓ · First to {target} wins",
-    "win": "{name} wins!"
-    },
+    "win": "{name} wins!",
+    "quit": "The game was quit.",
+    "loading": "Loading...",
+    "unknownPlayer": "Unknown"
+  },
+  "error": {
+    "game": {
+      "notFound": "Game not found.",
+      "generic": "Something went wrong.",
+      "quitFailed": "Failed to quit the game.",
+      "disconnected": "Connection lost. Game ended."
+    }
+  },
   "tournament": {
     "title": "TOURNAMENT",
     "numberOfPlayers": "Number of Players",

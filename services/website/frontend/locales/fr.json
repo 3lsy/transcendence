@@ -1,23 +1,68 @@
 {
-  "home": { "title": "PONG" },
-  "btn": {
-    "play": { "top": "JOUER", "bottom": "PARTIE" },
-    "tournament": { "top": "TOURNOI", "bottom": "" },
-    "scores": { "top": "MEILLEURS", "bottom": "SCORES" },
-    "start": { "top": "DÉMARRER", "bottom": "PARTIE" },
-    "startTournament": { "top": "DÉMARRER", "bottom": "TOURNOI" },
-    "back": { "top": "RETOUR", "bottom": "MENU" },
-    "home": { "top": "ACCUEIL", "bottom": "MENU" },
-    "quit": { "top": "QUITTER", "bottom": "PARTIE" },
-    "restart": { "top": "REJOUER", "bottom": "PARTIE" },
-    "clear": { "top": "EFFACER", "bottom": "SCORES" }
+  "home": {
+    "title": "PONG"
   },
-  "common": { "remove": "Supprimer" },
+  "btn": {
+    "play": {
+      "top": "JOUER",
+      "bottom": "PARTIE"
+    },
+    "tournament": {
+      "top": "TOURNOI",
+      "bottom": ""
+    },
+    "scores": {
+      "top": "MEILLEURS",
+      "bottom": "SCORES"
+    },
+    "start": {
+      "top": "DÉMARRER",
+      "bottom": "PARTIE"
+    },
+    "startTournament": {
+      "top": "DÉMARRER",
+      "bottom": "TOURNOI"
+    },
+    "back": {
+      "top": "RETOUR",
+      "bottom": "MENU"
+    },
+    "home": {
+      "top": "ACCUEIL",
+      "bottom": "MENU"
+    },
+    "quit": {
+      "top": "QUITTER",
+      "bottom": "PARTIE"
+    },
+    "restart": {
+      "top": "REJOUER",
+      "bottom": "PARTIE"
+    },
+    "clear": {
+      "top": "EFFACER",
+      "bottom": "SCORES"
+    }
+  },
+  "common": {
+    "remove": "Supprimer"
+  },
   "game": {
     "title": "PARTIE",
     "alias": "Pseudo",
     "controls": "Commandes : Gauche = W/S, Droite = ↑/↓ · Premier à {target} gagne",
-    "win": "{name} gagne !"
+    "win": "{name} gagne !",
+    "quit": "La partie a été quittée.",
+    "loading": "Chargement...",
+    "unknownPlayer": "Inconnu"
+  },
+  "error": {
+    "game": {
+      "notFound": "Partie introuvable.",
+      "generic": "Une erreur est survenue.",
+      "quitFailed": "Impossible de quitter la partie.",
+      "disconnected": "Connexion perdue. Partie terminée."
+    }
   },
   "tournament": {
     "title": "TOURNOI",

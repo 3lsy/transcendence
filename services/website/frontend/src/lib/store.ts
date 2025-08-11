@@ -19,7 +19,7 @@ function shuffle<T>(arr: T[]): T[] {
 /* ---------------------- Game ---------------------- */
 let gameLeft = 'Player A';
 let gameRight = 'Player B';
-const TARGET_POINTS = 11;
+const TARGET_POINTS = 10;
 
 export function setGamePlayers(left: string, right: string): void {
   gameLeft = (left || '').trim() || 'Player A';
