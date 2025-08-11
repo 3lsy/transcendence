@@ -62,7 +62,8 @@ class GamePage extends HTMLElement {
     const msg = this.querySelector<HTMLElement>('#msg')!;
 
     this.game?.destroy();
-    this.game = new PongGame(canvas, left, right, target, {
+    const matchId = new URLSearchParams(window.location.search).get('matchId') || 'default';
+    this.game = new PongGame(canvas, left, right, target, matchId, {
       onScore: (l, r) => { ls.textContent = String(l); rs.textContent = String(r); },
       onGameOver: (winner, points) => {
         overlay.classList.remove('hidden');

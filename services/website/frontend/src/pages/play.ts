@@ -1,9 +1,28 @@
 import { setGamePlayers } from '../lib/store.js';
 import { t } from '../lib/i18n.js';
+import { navigate } from '../router/router.js';
 
 const tag = 'page-play';
 
 class PlayPage extends HTMLElement {
+  async joinGame(alias: string): Promise<{ matchId: string, side: string }> {
+    const response = await fetch('/api/game/join', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        matchId: 'default', // You might want to generate this or get from somewhere
+        alias
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to join game');
+    }
+
+    return response.json();
+  }
   connectedCallback(): void {
     this.innerHTML = `
       <section>
@@ -38,20 +57,24 @@ class PlayPage extends HTMLElement {
         </div>
 
         <div class="mt-10 flex justify-end">
-          <a id="start" href="/game" class="btn-menu btn-menu-sm">
+          <button id="start" href="/game" class="btn-menu btn-menu-sm">
             <span class="btn-menu-inner">
               <span class="block">${t('btn.start.top')}</span>
               <span class="block">${t('btn.start.bottom')}</span>
             </span>
-          </a>
+          </button>
         </div>
       </section>
     `;
 
-    this.querySelector('#start')?.addEventListener('click', () => {
-      const a = (this.querySelector('#a') as HTMLInputElement)?.value || '';
-      const b = (this.querySelector('#b') as HTMLInputElement)?.value || '';
-      setGamePlayers(a, b);
+    this.querySelector<HTMLAnchorElement>('#start')!.addEventListener('click', async () => {
+      const matchId = 'default';
+      const a = this.querySelector<HTMLInputElement>('#a')?.value || 'Player A';
+      const b = this.querySelector<HTMLInputElement>('#b')?.value || 'Player B';
+      const { side: aSide } = await this.joinGame(a);
+      await this.joinGame(b);
+      setGamePlayers(aSide == 'left' ? a : b, aSide == 'right' ? a : b);
+      navigate(`game?matchId=${matchId}`);
     });
   }
 }
