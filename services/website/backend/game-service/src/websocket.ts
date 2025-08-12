@@ -9,9 +9,12 @@ import { PongGame } from './game';
 // Map of matchId -> connected clients
 const matchClients = new Map<string, Set<WebSocket>>();
 
+// Movement step size
+const PADDLE_STEP = 10;
+
 export function registerWebsocket(fastify: FastifyInstance, games: Map<string, PongGame>) {
-  fastify.get('/:matchId', { websocket: true }, (connection, req) => {
-    const ws = connection.socket;
+  fastify.get('/:matchId', { websocket: true }, (ws, req) => {
+
     const { matchId } = req.params as { matchId: string };
 
     let game = games.get(matchId);
@@ -33,8 +36,11 @@ export function registerWebsocket(fastify: FastifyInstance, games: Map<string, P
     ws.on('message', (message: Buffer | string) => {
       try {
         const data = JSON.parse(message.toString());
-        if (data.type === 'move' && data.side && typeof data.dy === 'number') {
-          game.movePaddle(data.side, data.dy);
+        if (data.type === 'move' && data.side && 
+          (data.direction === 'up' || data.direction === 'down')
+        ) {
+          const dy = data.direction === 'up' ? -PADDLE_STEP : PADDLE_STEP;
+          game.movePaddle(data.side, dy);
         }
       } catch (e) {
         console.error('Invalid message', e);
