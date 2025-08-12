@@ -3,6 +3,7 @@ import wsPlugin from '@fastify/websocket';
 import { PongGame } from './game';
 import { registerRoutes } from './routes';
 import { registerWebsocket } from './websocket';
+import { register } from 'module';
 
 const fastify = Fastify({ logger: true });
 fastify.register(wsPlugin);
@@ -10,19 +11,30 @@ fastify.register(wsPlugin);
 // Store all active games by matchId
 const games = new Map<string, PongGame>();
 
+let wsHandler: any;
+
+fastify.register((instance) => registerRoutes(instance, games));
+fastify.register((instance) => {
+  wsHandler = registerWebsocket(instance, games);
+});
+
+
 const TICK_RATE = 1000 / 60; // 60 FPS
 
 setInterval(async () => {
   for (const [matchId, game] of games.entries()) {
-    await game.update();
-
-    // Broadcast updated state to clients connected to this match
-    // Websocket logic to broadcast to the right clients
+    // Only update and broadcast if game has two players
+    if (!game.isFull()) continue;
+    const gameEnded = await game.update();
+    // Broadcast the latest state to clients
+    wsHandler.broadcastState(matchId, game.getState());
+    // If the game has ended, remove from active matches
+    if (gameEnded) {
+      console.log(`Game ended for match ${matchId}, cleaning up...`);
+      games.delete(matchId);
+    }
   }
 }, TICK_RATE);
-
-registerRoutes(fastify, games);
-registerWebsocket(fastify, games);
 
 const startGameService = async () => {
   try {
