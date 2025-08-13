@@ -3,22 +3,39 @@ export type GameCallbacks = {
   onGameOver: (winner: string, points: number) => void;
 };
 
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
+type Player = {
+  alias: string;
+  side: 'left' | 'right';
+  y: number;
+};
+
+type GameState = {
+  ball: {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+  };
+  players: {
+    left?: Player;
+    right?: Player;
+  };
+  scores: {
+    left: number;
+    right: number;
+  };
+};
+
+const SERVER_WIDTH = 800;
+const SERVER_HEIGHT = 400;
 
 export class PongGame {
   private ctx: CanvasRenderingContext2D;
   private ws: WebSocket;
 
-  // Canvas size (auto-resizes to container)
-  private width = 800;
-  private height = 500;
-
   // Geometry
-  private readonly paddleW = 10;
-  private readonly paddleH = 90;
-  private readonly ballR = 7;
+  private readonly paddleW = 2;
+  private readonly paddleH = 80;
 
   // Paddle positions
   private leftY = 0;
@@ -27,14 +44,15 @@ export class PongGame {
   // Ball state
   private ballX = 0;
   private ballY = 0;
+  private readonly ballSize = 10;
   private vx = 0;
   private vy = 0;
 
-  private updateGameState(state: any) {
+  private updateGameState(state: GameState) {
     // Update paddle positions
     if (state.players) {
-      this.leftY = state.players.left?.y ?? this.height / 2 - this.paddleH / 2;
-      this.rightY = state.players.right?.y ?? this.height / 2 - this.paddleH / 2;
+      this.leftY = state.players.left?.y ?? 0;
+      this.rightY = state.players.right?.y ?? 0;
     }
 
     // Update ball position
@@ -78,29 +96,27 @@ export class PongGame {
   // Event handlers (bound for add/remove)
   private onKeyDown = (e: KeyboardEvent) => this.keys.add(e.key);
   private onKeyUp = (e: KeyboardEvent) => this.keys.delete(e.key);
-  private onResize = () => this.handleResize();
 
   // Game loop (arrow keeps "this")
   private tick = () => {
     if (!this.running) return;
 
     // Input
-    const paddleSpeed = 7;
-    let dy = 0;
-    
+    let direction: "up" | "down" | null = null;
+
     // Left paddle
-    if (this.keys.has('w') || this.keys.has('W')) dy = -paddleSpeed;
-    else if (this.keys.has('s') || this.keys.has('S')) dy = paddleSpeed;
-    if (dy !== 0) {
-      this.ws.send(JSON.stringify({ type: 'move', side: 'left', dy }));
+    if (this.keys.has('w') || this.keys.has('W')) direction = 'up';
+    else if (this.keys.has('s') || this.keys.has('S')) direction = 'down';
+    if (direction) {
+      this.ws.send(JSON.stringify({ type: 'move', side: 'left', direction }));
     }
-    
+
     // Right paddle
-    dy = 0;
-    if (this.keys.has('ArrowUp')) dy = -paddleSpeed;
-    else if (this.keys.has('ArrowDown')) dy = paddleSpeed;
-    if (dy !== 0) {
-      this.ws.send(JSON.stringify({ type: 'move', side: 'right', dy }));
+    direction = null;
+    if (this.keys.has('ArrowUp')) direction = 'up';
+    else if (this.keys.has('ArrowDown')) direction = 'down';
+    if (direction) {
+      this.ws.send(JSON.stringify({ type: 'move', side: 'right', direction }));
     }
 
     // Draw frame
@@ -108,16 +124,16 @@ export class PongGame {
     this.raf = requestAnimationFrame(this.tick);
   };
 
-    constructor(
+  constructor(
     private canvas: HTMLCanvasElement,
     private leftPlayer: string,
     private rightPlayer: string,
     private target: number,
-    private matchId: string,
+    matchId: string,
     private cb: GameCallbacks,
   ) {
     this.ctx = canvas.getContext('2d')!;
-    
+
     // Initialize WebSocket connection
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.host;
@@ -135,9 +151,6 @@ export class PongGame {
 
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
-    window.addEventListener('resize', this.onResize);
-
-    this.handleResize();
   }
 
   start(): void {
@@ -153,49 +166,36 @@ export class PongGame {
 
   destroy(): void {
     this.stop();
+    this.ws.close();
     window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('keyup', this.onKeyUp);
-    window.removeEventListener('resize', this.onResize);
-  }
-
-  private handleResize(): void {
-    const rect = this.canvas.getBoundingClientRect();
-    this.width = 800; // Match server dimensions
-    this.height = 400; // Match server dimensions
-    
-    // Scale canvas to fit container while maintaining aspect ratio
-    const scale = Math.min(
-      rect.width / this.width,
-      rect.height / this.height
-    );
-    
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
-    this.canvas.style.transform = `scale(${scale})`;
-    this.canvas.style.transformOrigin = 'top left';
   }
 
   private draw(): void {
     const c = this.ctx;
-    c.clearRect(0, 0, this.width, this.height);
+    const { width, height } = this.canvas;
+    const scaleX = width / SERVER_WIDTH;
+    const scaleY = height / SERVER_HEIGHT;
+
+    c.clearRect(0, 0, width, height);
 
     // Midline
     c.strokeStyle = 'rgba(255,255,255,0.25)';
     c.setLineDash([6, 12]);
     c.beginPath();
-    c.moveTo(this.width / 2, 0);
-    c.lineTo(this.width / 2, this.height);
+    c.moveTo(SERVER_WIDTH / 2 * scaleX, 0);
+    c.lineTo(SERVER_WIDTH / 2 * scaleX, SERVER_HEIGHT * scaleY);
     c.stroke();
     c.setLineDash([]);
 
     // Paddles
     c.fillStyle = '#fff';
-    c.fillRect(8, this.leftY, this.paddleW, this.paddleH);
-    c.fillRect(this.width - (this.paddleW + 8), this.rightY, this.paddleW, this.paddleH);
+    c.fillRect(8 * scaleX, this.leftY * scaleY, this.paddleW * scaleX, this.paddleH * scaleY);
+    c.fillRect((SERVER_WIDTH - (this.paddleW + 8)) * scaleX, this.rightY * scaleY, this.paddleW * scaleX, this.paddleH * scaleY);
 
     // Ball
     c.beginPath();
-    c.arc(this.ballX, this.ballY, this.ballR, 0, Math.PI * 2);
+    c.arc(this.ballX * scaleX, this.ballY * scaleY, this.ballSize * scaleX, 0, Math.PI * 2);
     c.fill();
   }
 

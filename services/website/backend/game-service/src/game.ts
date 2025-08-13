@@ -87,7 +87,7 @@ export class PongGame {
         this.onGameEnd(side, winnerAlias);
       }
 
-      this.resetGame();
+      // this.resetGame(); // this reset in index.ts
       return true;
     }
     return false;
