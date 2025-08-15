@@ -9,7 +9,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./data/grafana-data
+      device: /home/vagrant/data/grafana-data
 
   prometheus-data:
     name: prometheus-data
@@ -17,49 +17,49 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./data/prometheus-data
+      device: /home/vagrant/data/prometheus-data
   
   vault-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/vault-data
+      device: /home/vagrant/data/vault-data
   
   elasticsearch-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/elasticsearch-data
+      device: /home/vagrant/data/elasticsearch-data
   
   kibana-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/kibana-data
+      device: /home/vagrant/data/kibana-data
 
   logstash-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/logstash-data
+      device: /home/vagrant/data/logstash-data
 
   logstash-config:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/logstash-config
+      device: /home/vagrant/data/logstash-config
 
   scoreboard-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/scoreboard-data
+      device: /home/vagrant/data/scoreboard-data
 
 services:
 
