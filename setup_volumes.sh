@@ -20,15 +20,17 @@ declare -A volumes=(
     [scoreboard-data]="999:999"
 )
 
-mkdir -p data/
+DATA_DIR="/home/vagrant/data"
+
+mkdir -p "$DATA_DIR"
 
 create_volume() {
     local dir=$1
     local uid_gid=$2
 
-    mkdir -p "data/$dir"
-    sudo chown $uid_gid "data/$dir"
-    sudo chmod 700 "data/$dir"
+    mkdir -p "$DATA_DIR/$dir"
+    sudo chown $uid_gid "$DATA_DIR/$dir"
+    sudo chmod 700 "$DATA_DIR/$dir"
 }
 
 for volume in "${!volumes[@]}"; do
