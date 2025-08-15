@@ -17,6 +17,7 @@ declare -A volumes=(
     [kibana-data]="999:999"
     [logstash-data]="999:999"
     [logstash-config]="999:999"
+    [scoreboard-data]="999:999"
 )
 
 mkdir -p data/
