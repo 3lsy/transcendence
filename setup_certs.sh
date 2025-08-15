@@ -45,9 +45,10 @@ generate_cert() {
   local target_dir="$2"
   local cn="${service_name}.localhost"
 
+  echo "Generating cert for $service_name in $target_dir..."
   mkdir -p "$target_dir"
+  rm -rf "$target_dir/$service_name.key" "$target_dir/$service_name.crt"
 
-  echo "Generating cert for $service_name..."
   openssl req -x509 -newkey rsa:${KEY_SIZE} -nodes \
     -keyout "$target_dir/$service_name.key" \
     -out "$target_dir/$service_name.crt" \
