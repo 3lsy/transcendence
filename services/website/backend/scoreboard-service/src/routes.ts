@@ -17,29 +17,32 @@ export function registerScoreboardRoutes(
 
   // Save a player's score
   fastify.post('/score', async (req, reply) => {
-    const body = req.body as { nickname: string; score: number };
+    const body = req.body as { left_nick: string; left_score: number; right_nick: string; right_score: number };
 
-    if (!body.nickname || typeof body.score !== 'number') {
+    if ((!body.left_nick || typeof body.left_score !== 'number') ||
+        (!body.right_nick || typeof body.right_score !== 'number')) {
       reply.status(400).send({ error: 'Invalid input' });
       return;
     }
 
     await db.run(
-      `INSERT INTO scores (nickname, score) VALUES (?, ?)`,
-      body.nickname,
-      body.score
+      `INSERT INTO scores (left_nick, left_score, right_nick, right_score) VALUES (?, ?, ?, ?)`,
+      body.left_nick,
+      body.left_score,
+      body.right_nick,
+      body.right_score
     );
 
     return { message: 'Score saved', data: body };
   });
 
-  // Retrieve leaderboard (highest scores first)
-  fastify.get('/leaderboard', async () => {
+  // Retrieve scoreboard (highest scores first)
+  fastify.get('/scoreboard', async () => {
     const rows = await db.all(`
-      SELECT nickname, score, created_at
+      SELECT created_at, left_nick, left_score, right_nick, right_score
       FROM scores
-      ORDER BY score DESC, created_at ASC
-      LIMIT 10
+      ORDER BY created_at DESC
+      LIMIT 30
     `);
     return rows;
   });

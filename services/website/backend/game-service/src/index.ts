@@ -18,13 +18,12 @@ fastify.register((instance) => {
   wsHandler = registerWebsocket(instance, games);
 });
 
-
 const TICK_RATE = 1000 / 60; // 60 FPS
 
 setInterval(async () => {
   for (const [matchId, game] of games.entries()) {
-    // Only update and broadcast if game has two players
-    if (!game.isFull()) continue;
+    // Only update and broadcast if game has two players and has started
+    if (!game.isFull() || !game.started) continue; ///
     const gameEnded = await game.update();
     // Broadcast the latest state to clients
     wsHandler.broadcastState(matchId, game.getState());
