@@ -73,8 +73,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "3601:3601"  # Game service API
+    # ports:
+    #   - "3601:3601"  # Game service API
 
   scoreboard-service:
     build: ./services/website/backend/scoreboard-service
@@ -84,8 +84,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "3602:3602"  # Scoreboard service API
+    # ports:
+    #   - "3602:3602"  # Scoreboard service API
     volumes:
       - scoreboard-data:/app/data
 
@@ -97,8 +97,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "3603:3603"  # Tournament service API
+    # ports:
+    #   - "3603:3603"  # Tournament service API
   
   frontend:
     build: ./services/website/frontend
