@@ -170,8 +170,15 @@ export class PongGame {
   start() {
     if (this.isFull()) {
       this.started = true;
-      this.resetBall(); // ensure fresh start
+      this.resetBall(); // ensures a fresh start
     }
+  }
+
+  // Stop the game immediately, quitting the match
+  quit() {
+    this.gameEnded = true;
+    this.started = false;
+    this.resetGame(); // cleans scores, players, ball
   }
 
 }
