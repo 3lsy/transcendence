@@ -24,11 +24,11 @@ setInterval(async () => {
   for (const [matchId, game] of games.entries()) {
     // Only update and broadcast if game has two players and has started
     if (!game.isFull() || !game.started) continue; ///
-    const gameEnded = await game.update();
+    const foundWinner = await game.update();
     // Broadcast the latest state to clients
     wsHandler.broadcastState(matchId, game.getState());
     // If the game has ended, remove from active matches
-    if (gameEnded) {
+    if (foundWinner && games.has(matchId)) {
       console.log(`Game ended for match ${matchId}, cleaning up...`);
       games.delete(matchId);
     }

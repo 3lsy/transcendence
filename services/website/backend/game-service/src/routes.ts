@@ -9,6 +9,7 @@ import { PongGame } from './game';
 // - POST /move: Move paddle up or down
 // - GET /state: Get the current game state
 // - POST /start: Start the game when both players are ready
+// - QUIT: /quit: Quit a match in progress
 
 export function registerRoutes(fastify: FastifyInstance, games: Map<string, PongGame>) {
   fastify.get('/health', async () => ({ status: 'Game Service OK' }));
@@ -74,4 +75,20 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
   game.start();
   return { message: 'Game started' };
   });
+
+  // Quit a match mid-game
+  fastify.post<{ Body: { matchId: string } }>('/quit', async (req, reply) => {
+    const { matchId } = req.body;
+    const game = games.get(matchId);
+
+    if (!game) {
+      return reply.code(404).send({ error: 'Match not found' });
+    }
+
+    game.quit();           // stops the game immediately
+    games.delete(matchId); // removes it from active matches
+
+    return { message: `Match ${matchId} has been ended.` };
+  });
+
 }
