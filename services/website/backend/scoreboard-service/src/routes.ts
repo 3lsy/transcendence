@@ -9,6 +9,8 @@ import { Database } from 'sqlite';
 // - POST /score: Save a player's score
 // - GET /leaderboard: Retrieve the top scores
 
+const MAX_RECORDS = 100; // Limit for storing scores
+
 export function registerScoreboardRoutes(
   fastify: FastifyInstance,
   db: Database<sqlite3.Database, sqlite3.Statement>
@@ -31,6 +33,17 @@ export function registerScoreboardRoutes(
       body.left_score,
       body.right_nick,
       body.right_score
+    );
+
+    // Deletes oldest records if exceeding MAX_RECORDS
+    await db.run(
+      `DELETE FROM scores
+       WHERE id NOT IN (
+         SELECT id FROM scores
+         ORDER BY created_at DESC
+         LIMIT ?
+       )`,
+      MAX_RECORDS
     );
 
     return { message: 'Score saved', data: body };
