@@ -91,4 +91,6 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
     return { message: `Match ${matchId} has been ended.` };
   });
 
+  // GET /match-id: Get match ID
+
 }
