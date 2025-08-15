@@ -13,7 +13,8 @@ export class PongGame {
   readonly height = 400;
   readonly paddleHeight = 80;
   readonly ballSize = 10;
-  readonly winningScore = 10;
+  readonly winningScore = 11;
+  private gameEnded = false;
 
   matchId: string;
 
@@ -29,6 +30,7 @@ export class PongGame {
   }
 
   async update(): Promise<boolean> {
+    if (this.gameEnded) return true; // Game already ended
     // Move ball
     this.ball.x += this.ball.vx;
     this.ball.y += this.ball.vy;
@@ -44,20 +46,20 @@ export class PongGame {
         this.ball.vx *= -1;
       } else {
         this.scores.right++;
-        const gameEnded = await this.checkWinner('right');
-        if (gameEnded) return true;
+        this.gameEnded = await this.checkWinner('right');
+        if (this.gameEnded) return true;
         this.resetBall();
       }
     }
 
     // Paddle collision & scoring right side
-    if (this.ball.x >= this.width - 20 && this.players.right) {
+    else if (this.ball.x >= this.width - 20 && this.players.right) {
       if (this.ball.y >= this.players.right.y && this.ball.y <= this.players.right.y + this.paddleHeight) {
         this.ball.vx *= -1;
       } else {
         this.scores.left++;
-        const gameEnded = await this.checkWinner('left');
-        if (gameEnded) return true;
+        this.gameEnded = await this.checkWinner('left');
+        if (this.gameEnded) return true;
         this.resetBall();
       }
     }
@@ -66,13 +68,18 @@ export class PongGame {
   }
 
   private async checkWinner(side: PlayerSide): Promise<boolean> {
-    if (this.scores[side] >= this.winningScore) {
+    console.log(`Checking winner for side: ${side}, score: ${this.scores[side]}`);
+    if (this.scores[side] >= (this.winningScore)) {
+      this.gameEnded = true;
       const winnerAlias = this.players[side]?.alias || 'Unknown';
+      const loserSide: PlayerSide = side === 'left' ? 'right' : 'left';
+      const loserAlias = this.players[loserSide]?.alias || 'Unknown';
+
       console.log(`Player on side ${side} (${winnerAlias}) won the game!`);
 
       // Save score to scoreboard-service
-      if (this.players[side]) {
-        await saveScore(winnerAlias, this.scores[side]);
+      if (this.players[side] && this.players[loserSide]) {
+        await saveScore(winnerAlias, this.scores[side], loserAlias, this.scores[loserSide]);
       }
 
       // Notify if callback is set
@@ -127,7 +134,10 @@ export class PongGame {
   }
 
   isFull(): boolean {
-    return !!(this.players.left && this.players.right);
+    return !!(this.players.left && this.players.right &&
+      this.players.left.alias.trim() !== '' &&
+      this.players.right.alias.trim() !== ''
+    );
   }
 
   resetBall() {
@@ -153,4 +163,22 @@ export class PongGame {
       right: this.players.right?.alias ?? null,
     };
   }
+
+  // Start the pong game
+  started = false;
+
+  start() {
+    if (this.isFull()) {
+      this.started = true;
+      this.resetBall(); // ensures a fresh start
+    }
+  }
+
+  // Stop the game immediately, quitting the match
+  quit() {
+    this.gameEnded = true;
+    this.started = false;
+    this.resetGame(); // cleans scores, players, ball
+  }
+
 }

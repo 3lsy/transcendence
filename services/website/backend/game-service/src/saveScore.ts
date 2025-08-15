@@ -1,18 +1,18 @@
 import { fetch } from 'undici';
 
-export async function saveScore(alias: string, score: number) {
+export async function saveScore(left_nick: string, left_score: number, right_nick: string, right_score: number) {
   try {
-    const res = await fetch('http://scoreboard-service:3602/', {
+    const res = await fetch('http://scoreboard-service:3602/score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nickname: alias, score }),
+      body: JSON.stringify({ left_nick, left_score, right_nick, right_score }),
     });
 
     if (!res.ok) {
       const text = await res.text();
       console.error('Failed to save score:', text);
     } else {
-      console.log(`Score saved for ${alias}: ${score}`);
+      console.log(`Score saved for ${left_nick}: ${left_score} and ${right_nick}: ${right_score}`);
     }
   } catch (error) {
     console.error('Error saving score:', error);
