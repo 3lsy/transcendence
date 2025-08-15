@@ -7,17 +7,25 @@ import { registerScoreboardRoutes } from './routes';
 let db: Database<sqlite3.Database, sqlite3.Statement>;
 
 async function initDb() {
+
+  const dbPath = path.join('/app/data', 'scoreboard.db');
+
+  await import('fs/promises').then(fs => fs.mkdir('/app/data', { recursive: true }));
+  console.log(`Initializing database at ${dbPath}`);
+
   db = await open({
-    filename: path.join(process.cwd(), 'scoreboard.db'),
+    filename: dbPath,
     driver: sqlite3.Database,
   });
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS scores (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nickname TEXT NOT NULL,
-      score INTEGER NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      created_at DATETIME DEFAULT (datetime('now', 'localtime')),
+      left_nick TEXT NOT NULL,
+      left_score INTEGER NOT NULL,
+      right_nick TEXT NOT NULL,
+      right_score INTEGER NOT NULL
     )
   `);
 }

@@ -54,6 +54,13 @@ volumes:
       o: bind
       device: ./data/logstash-config
 
+  scoreboard-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/scoreboard-data
+
 services:
 
   # Backend Microservices
@@ -79,6 +86,8 @@ services:
       - transcendence-network
     ports:
       - "3602:3602"  # Scoreboard service API
+    volumes:
+      - scoreboard-data:/app/data
 
   tournament-service:
     build: ./services/website/backend/tournament-service

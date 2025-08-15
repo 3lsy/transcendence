@@ -8,6 +8,7 @@ import { PongGame } from './game';
 // - POST /join: Join the game with an alias
 // - POST /move: Move paddle up or down
 // - GET /state: Get the current game state
+// - POST /start: Start the game when both players are ready
 
 export function registerRoutes(fastify: FastifyInstance, games: Map<string, PongGame>) {
   fastify.get('/health', async () => ({ status: 'Game Service OK' }));
@@ -56,5 +57,21 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
     }
 
     return game.getState();
+  });
+
+  // Start the game
+  fastify.post<{ Body: { matchId: string } }>('/start', async (req, reply) => {
+  const { matchId } = req.body;
+  const game = games.get(matchId);
+
+  if (!game) {
+    return reply.code(404).send({ error: 'Match not found' });
+  }
+  if (!game.isFull()) {
+    return reply.code(400).send({ error: 'Not enough players to start' });
+  }
+
+  game.start();
+  return { message: 'Game started' };
   });
 }
