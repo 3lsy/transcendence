@@ -20,7 +20,7 @@ declare -A volumes=(
     [scoreboard-data]="999:999"
 )
 
-DATA_DIR="/home/vagrant/data"
+DATA_DIR="./data"
 
 mkdir -p "$DATA_DIR"
 
