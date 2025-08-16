@@ -15,9 +15,9 @@ RUN chown -R vault:vault /vault/ /usr/bin/vault
 
 COPY conf/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
-
+RUN mkdir -p /vault/data && chown -R vault:vault /vault/data 
 USER vault
-
+VOLUME ["/vault/data"]
 CMD ["/usr/local/bin/start.sh"]
 
 # openssl req -x509 -newkey rsa:4096 -nodes -keyout vault.key -out vault.crt -days 365 -subj "/C=FR/ST=Paris/L=Paris/O=42/OU=42/CN=vault.localhost"
