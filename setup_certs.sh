@@ -28,6 +28,15 @@ declare -A services=(
   ["vault"]="./services/vault/certs"
 )
 
+# Ownership for each service (UID:GID)
+declare -A service_ownership=(
+  ["elasticsearch"]="999:999"
+  ["kibana"]="999:999"
+  ["logstash"]="999:999"
+  ["grafana"]="998:998"
+  ["vault"]="999:999"
+)
+
 # Certs to copy to Vault
 declare -A vault_certs=(
   ["elasticsearch"]="./services/logs-management/elasticsearch/certs/elasticsearch.crt"
@@ -43,7 +52,7 @@ declare -A vault_certs=(
 generate_cert() {
   local service_name="$1"
   local target_dir="$2"
-  local cn="${service_name}.localhost"
+  local cn="${service_name}.42.fr"
 
   echo "Generating cert for $service_name in $target_dir..."
   mkdir -p "$target_dir"
@@ -54,6 +63,14 @@ generate_cert() {
     -out "$target_dir/$service_name.crt" \
     -days "$DAYS_VALID" \
     -subj "/C=$COUNTRY/ST=$STATE/L=$LOCALITY/O=$ORG/OU=$ORG_UNIT/CN=$cn"
+
+  # Set permissions and ownership
+  chmod 600 "$target_dir/$service_name.key"
+  chmod 644 "$target_dir/$service_name.crt"
+  if [[ -n "${service_ownership[$service_name]:-}" ]]; then
+    sudo chown "${service_ownership[$service_name]}" "$target_dir/$service_name.key" "$target_dir/$service_name.crt"
+  fi
+  echo "Generated $service_name.key and $service_name.crt in $target_dir"
 }
 
 generate_all() {
@@ -66,8 +83,13 @@ copy_certs() {
     # Copy .crt to ./services/vault/certs
     local source_crt="$1"
 
-    cp "$source_crt" "$VAULT_CERTS_DIR/"
+    sudo cp "$source_crt" "$VAULT_CERTS_DIR/"
     echo "Copied $(basename "$source_crt") to $VAULT_CERTS_DIR"
+
+    # Set ownership for the copied cert
+    if [[ -n "${service_ownership[$(basename "$source_crt" .crt)]}" ]]; then
+        sudo chown "${service_ownership[$(basename "$source_crt" .crt)]}" "$VAULT_CERTS_DIR/$(basename "$source_crt")"
+    fi
 }
 
 # ===================================

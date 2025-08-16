@@ -16,13 +16,6 @@ RUN rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 RUN dnf install -y --enablerepo=elastic filebeat && \
     dnf clean all
 
-# openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout rproxy.key -out rproxy.crt -config rproxy_openssl.cnf -extensions v3_req
-COPY certs/ /etc/pki/tls/certs/
-
-# Set permissions on private keys
-RUN chmod 600 /etc/pki/tls/certs/*.key && \
-    chown root:root /etc/pki/tls/certs/*
-
 RUN rm -f /etc/httpd/conf.d/ssl.conf
 
 # There ends the reverse proxy with SSL configuration. Next is the WAF/ModSecurity configuration.
