@@ -49,8 +49,8 @@ export function registerScoreboardRoutes(
     return { message: 'Score saved', data: body };
   });
 
-  // Retrieve scoreboard (highest scores first)
-  fastify.get('/scoreboard', async () => {
+  // Retrieve scoreboard list (Newest matches first)
+  fastify.get('/list', async () => {
     const rows = await db.all(`
       SELECT created_at, left_nick, left_score, right_nick, right_score
       FROM scores
