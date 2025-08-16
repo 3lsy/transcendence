@@ -1,39 +1,25 @@
 import { FastifyInstance } from 'fastify';
 import { PongGame } from './game';
 
+// Helper function to check if a nickname is valid
+function isValidNickname(nickname: string): boolean {
+  if (!nickname || !(typeof nickname === 'string')) return false;
+  if (nickname.length < 3 || nickname.length > 8) return false;
+  const regex = /^[a-zA-Z0-9]+$/;
+  return regex.test(nickname);
+}
+
 // Description:
 // This module registers the routes for the Pong game service.
 // Routes :
 // - GET /health: Check service health
-// - POST /join: Join the game with an alias
 // - POST /move: Move paddle up or down
 // - GET /state: Get the current game state
-// - POST /start: Start the game when both players are ready
+// - POST: /new: Create a new game with two players and start it immediately
 // - QUIT: /quit: Quit a match in progress
 
 export function registerRoutes(fastify: FastifyInstance, games: Map<string, PongGame>) {
   fastify.get('/health', async () => ({ status: 'Game Service OK' }));
-
-  // Join a match
-  fastify.post<{ Body: { matchId: string; alias: string } }>('/join', async (req, reply) => {
-    const { matchId, alias } = req.body;
-    if (!matchId || !alias) {
-      return reply.code(400).send({ error: 'matchId and alias are required' });
-    }
-
-    let game = games.get(matchId);
-    if (!game) {
-      game = new PongGame(matchId);
-      games.set(matchId, game);
-    }
-
-    const side = game.addPlayer(alias);
-    if (!side) {
-      return reply.code(403).send({ error: 'Game full' });
-    }
-
-    return { side };
-  });
 
   // Move paddle
   fastify.post<{ Body: { matchId: string; side: 'left' | 'right'; dy: number } }>('/move', async (req, reply) => {
@@ -60,20 +46,39 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
     return game.getState();
   });
 
-  // Start the game
-  fastify.post<{ Body: { matchId: string } }>('/start', async (req, reply) => {
-  const { matchId } = req.body;
-  const game = games.get(matchId);
+  // New game creation instead of joining one player at a time and then starting.
+  // Now when you click "Start" in the UI, it creates a new match with two players.
+  fastify.post<{ Body: { nick_left: string; nick_right: string } }>('/new', async (req, reply) => {
+    const { nick_left, nick_right } = req.body;
+    if (!nick_left || !nick_right) {
+      return reply.code(400).send({ error: 'Both nicknames are required' });
+    }
 
-  if (!game) {
-    return reply.code(404).send({ error: 'Match not found' });
-  }
-  if (!game.isFull()) {
-    return reply.code(400).send({ error: 'Not enough players to start' });
-  }
+    if (!isValidNickname(nick_left) || !isValidNickname(nick_right)) {
+      return reply.code(400).send({ error: 'Nicknames must be alphanumeric, max 8 characters, and not empty' });
+    }
 
-  game.start();
-  return { message: 'Game started' };
+    const matchId = `match-${Date.now()}`; // Simple match ID generation
+    console.log(`Creating new match ${matchId} with players ${nick_left} and ${nick_right}`);
+
+    // Create a new game instance
+    let game = games.get(matchId);
+    if (!game) {
+      game = new PongGame(matchId);
+      games.set(matchId, game);
+    }
+
+    //Add both players to the game
+    const sideLeft = game.addPlayer(nick_left);
+    const sideRight = game.addPlayer(nick_right);
+    if (!sideLeft || !sideRight) {
+      return reply.code(403).send({ error: 'Game full' });
+    }
+
+    game.start(); // Start the game immediately with both players
+    console.log(`New match ${matchId} started with players ${nick_left} (left) and ${nick_right} (right)`);
+
+    return { matchId };
   });
 
   // Quit a match mid-game
@@ -90,7 +95,4 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
 
     return { message: `Match ${matchId} has been ended.` };
   });
-
-  // GET /match-id: Get match ID
-
 }
