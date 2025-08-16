@@ -179,6 +179,7 @@ services:
     volumes:
       - vault-data:/vault/data
       - ./services/vault/conf/config.hcl:/vault/config/config.hcl:ro
+      - ./services/vault/certs:/vault/certs:ro
   
   rproxy:
     build: ./services/rproxy
@@ -193,6 +194,7 @@ services:
       - "443:443"
     volumes:
       - ./services/rproxy/conf/redirect.conf:/etc/httpd/conf.d/redirect.conf:ro
+      - ./services/rproxy/certs:/etc/pki/tls/certs:ro
     depends_on:
       # - grafana
       # - prometheus
