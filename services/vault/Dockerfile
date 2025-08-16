@@ -6,15 +6,12 @@ RUN dnf -y update \
     && dnf -y install vault \
     && dnf clean all
 
-COPY ./certs/ /vault/certs/
-
 RUN mkdir -p /vault/policies
 
 COPY conf/grafana-policy.hcl /vault/policies/grafana-policy.hcl
 COPY conf/elastic-policy.hcl /vault/policies/elastic-policy.hcl
 
-RUN chown -R vault:vault /vault/ /usr/bin/vault \
-    && chmod 644 /vault/certs/*
+RUN chown -R vault:vault /vault/ /usr/bin/vault
 
 COPY conf/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh

@@ -8,6 +8,14 @@
 
 ![Project Structure](Project.png)
 
+## Build
+
+```bash
+./setup_certs.sh
+./setup_volumes.sh
+docker compose up -d
+```
+
 ## Chosen Modules
 
 ### Web
