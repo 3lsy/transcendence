@@ -7,7 +7,7 @@ import { Database } from 'sqlite';
 // Routes:
 // - GET /health: Check service health
 // - POST /score: Save a player's score
-// - GET /leaderboard: Retrieve the top scores
+// - GET /list: Retrieve the scoreboard list (newest matches first)
 
 const MAX_RECORDS = 100; // Limit for storing scores
 
