@@ -18,7 +18,7 @@ function isValidNickname(nickname: string): boolean {
 // - POST: /new: Create a new game with two players and start it immediately
 // - QUIT: /quit: Quit a match in progress
 
-export function registerRoutes(fastify: FastifyInstance, games: Map<string, PongGame>) {
+export function registerRoutes(fastify: FastifyInstance, games: Map<string, PongGame>, wsHandler: any) {
   fastify.get('/health', async () => ({ status: 'Game Service OK' }));
 
   // Move paddle
@@ -92,6 +92,8 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
 
     game.quit();           // stops the game immediately
     games.delete(matchId); // removes it from active matches
+
+    wsHandler.broadcastQuit(matchId);
 
     return { message: `Match ${matchId} has been ended.` };
   });

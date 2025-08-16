@@ -157,6 +157,19 @@ export class PongGame {
     };
   }
 
+  getResult() {
+    if (this.gameEnded) {
+      const winnerSide = this.scores.left > this.scores.right ? 'left' : 'right';
+      const winnerAlias = this.players[winnerSide]?.alias || 'Unknown';
+      return {
+        winnerSide: winnerSide,
+        winnerAlias,
+        scores: this.scores,
+      };
+    }
+    return null;
+  }
+
   getPlayers() {
     return {
       left: this.players.left?.alias ?? null,
