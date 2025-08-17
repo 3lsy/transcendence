@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import wsPlugin from '@fastify/websocket';
+import fastifyMetrics from 'fastify-metrics';
 import { PongGame } from './game';
 import { registerRoutes } from './routes';
 import { registerWebsocket } from './websocket';
@@ -7,6 +8,7 @@ import { register } from 'module';
 
 const fastify = Fastify({ logger: true });
 fastify.register(wsPlugin);
+fastify.register(fastifyMetrics, { endpoint: '/metrics' });
 
 // Store all active games by matchId
 const games = new Map<string, PongGame>();
