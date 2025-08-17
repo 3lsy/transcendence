@@ -12,8 +12,8 @@
       "bottom": ""
     },
     "scores": {
-      "top": "HIGH",
-      "bottom": "SCORES"
+      "top": "SCORES",
+      "bottom": ""
     },
     "start": {
       "top": "START",
@@ -34,14 +34,6 @@
     "quit": {
       "top": "QUIT",
       "bottom": "GAME"
-    },
-    "restart": {
-      "top": "RESTART",
-      "bottom": "GAME"
-    },
-    "clear": {
-      "top": "CLEAR",
-      "bottom": "SCORES"
     }
   },
   "common": {
@@ -70,7 +62,12 @@
     "firstRound": "First round order"
   },
   "scores": {
-    "title": "HIGH SCORES",
-    "empty": "No scores yet"
+    "title": "RECENT MATCHES",
+    "loading": "Loading matches...",
+    "empty": "No matches played yet",
+    "error": {
+      "fetch": "Failed to fetch matches",
+      "unknown": "An unexpected error occurred"
+    }
   }
 }

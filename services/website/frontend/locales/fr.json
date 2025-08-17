@@ -12,8 +12,8 @@
       "bottom": ""
     },
     "scores": {
-      "top": "MEILLEURS",
-      "bottom": "SCORES"
+      "top": "SCORES",
+      "bottom": ""
     },
     "start": {
       "top": "DÉMARRER",
@@ -34,14 +34,6 @@
     "quit": {
       "top": "QUITTER",
       "bottom": "PARTIE"
-    },
-    "restart": {
-      "top": "REJOUER",
-      "bottom": "PARTIE"
-    },
-    "clear": {
-      "top": "EFFACER",
-      "bottom": "SCORES"
     }
   },
   "common": {
@@ -70,7 +62,12 @@
     "firstRound": "Ordre du premier tour"
   },
   "scores": {
-    "title": "MEILLEURS SCORES",
-    "empty": "Aucun score"
+    "title": "MATCHS RÉCENTS",
+    "loading": "Chargement des matchs...",
+    "empty": "Aucun match joué",
+    "error": {
+      "fetch": "Impossible de récupérer les matchs",
+      "unknown": "Une erreur inattendue s'est produite"
+    }
   }
 }
