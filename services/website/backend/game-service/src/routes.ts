@@ -16,7 +16,7 @@ function isValidNickname(nickname: string): boolean {
 // - POST /move: Move paddle up or down
 // - GET /state: Get the current game state
 // - POST: /new: Create a new game with two players and start it immediately
-// - QUIT: /quit: Quit a match in progress
+// - POST: /quit: Quit a match in progress
 
 export function registerRoutes(fastify: FastifyInstance, games: Map<string, PongGame>, wsHandler: any) {
   fastify.get('/health', async () => ({ status: 'Game Service OK' }));
@@ -54,8 +54,17 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
       return reply.code(400).send({ error: 'Both nicknames are required' });
     }
 
-    if (!isValidNickname(nick_left) || !isValidNickname(nick_right)) {
-      return reply.code(400).send({ error: 'Nicknames must be alphanumeric, max 8 characters, and not empty' });
+    // Check if nicknames are different
+    if (nick_left === nick_right) {
+      return reply.code(400).send({ error: 'Nicknames must be different' });
+    }
+
+    // Check if nicknames are valid
+    if (!isValidNickname(nick_left)) {
+      return reply.code(400).send({ error: `Invalid nickname: ${nick_left}, must be alphanumeric, between 3 to 8 characters, and not empty` });
+    }
+    if (!isValidNickname(nick_right)) {
+      return reply.code(400).send({ error: `Invalid nickname: ${nick_right}, must be alphanumeric, between 3 to 8 characters, and not empty` });
     }
 
     const matchId = `match-${Date.now()}`; // Simple match ID generation

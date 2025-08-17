@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import fastifyMetrics from 'fastify-metrics';
 import path from 'path';
 import sqlite3 from 'sqlite3';
 import { open, Database } from 'sqlite';
@@ -31,6 +32,7 @@ async function initDb() {
 }
 
 const fastify = Fastify({ logger: true });
+fastify.register(fastifyMetrics, { endpoint: '/metrics' });
 
 const startScoreboardService = async () => {
   try {
