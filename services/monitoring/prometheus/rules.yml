@@ -26,7 +26,7 @@ groups:
           description: |
             Blackbox exporter probe to container ({{ $labels.instance }}) returned status code {{ $value }} which is not expected.
 
-      # High container CPU (example using cadvisor metrics)
+      # High container CPU
       - alert: HighContainerCPU
         expr: rate(container_cpu_usage_seconds_total[2m]) > 0.85
         for: 2m
