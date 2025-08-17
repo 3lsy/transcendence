@@ -15,40 +15,48 @@ class TournamentPage extends HTMLElement {
 
   private render(): void {
     this.innerHTML = `
-      <section>
-        <div class="mb-8 flex items-center gap-4">
-          <a href="/" class="btn-menu btn-menu-sm">
+      <section class="min-h-screen flex flex-col px-4 py-10">
+        <div class="mb-10 flex items-center justify-between">
+          <a href="/" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
             <span class="btn-menu-inner">
               <span class="block">${t('btn.back.top')}</span>
               <span class="block">${t('btn.back.bottom')}</span>
             </span>
           </a>
-          <h2 class="font-pong text-3xl tracking-wide">${t('tournament.title')}</h2>
+          <h2 class="font-pong text-4xl tracking-wide text-white">${t('tournament.title')}</h2>
         </div>
 
-        <div class="mb-6">
-          <div class="mb-2 text-xs opacity-70">${t('tournament.numberOfPlayers')}</div>
-          <div class="flex gap-2">
-            ${[2,4,8,16].map(n=>`<button class="rounded-md border border-slate-600 px-3 py-2 hover:bg-slate-900/60" data-size="${n}">${n}</button>`).join('')}
+        <div class="flex flex-col items-center space-y-10">
+          <!-- Player count selection -->
+          <div class="w-full max-w-md">
+            <div class="mb-2 text-xs text-slate-400 tracking-wide">${t('tournament.numberOfPlayers')}</div>
+            <div class="grid grid-cols-4 gap-3">
+              ${[2, 4, 8, 16].map(n => `
+                <button class="rounded-md border border-slate-600 px-4 py-2 text-white hover:border-white transition" data-size="${n}">${n}</button>
+              `).join('')}
+            </div>
           </div>
-        </div>
 
-        <div class="mb-4 flex items-center gap-2">
-          <input id="alias" placeholder="${t('game.alias')}" class="w-56 rounded-md border border-slate-600 bg-black px-3 py-2 placeholder-slate-500 focus:border-slate-300 outline-none"/>
-          <button id="add" class="rounded-md border border-slate-600 px-3 py-2 hover:bg-slate-900/60">+</button>
-        </div>
+          <!-- Add player input -->
+          <div class="w-full max-w-md flex gap-2">
+            <input id="alias" placeholder="${t('game.alias')}" class="flex-1 rounded-md border border-slate-600 bg-black px-3 py-2 placeholder-slate-500 text-white focus:outline-none focus:border-slate-300 transition" />
+            <button id="add" class="rounded-md border border-slate-600 px-4 py-2 text-white hover:border-white transition">+</button>
+          </div>
 
-        <div class="rounded-lg border border-slate-700 bg-slate-800/20 p-4">
-          <ul id="list" class="max-h-64 space-y-2 overflow-auto text-sm"></ul>
-        </div>
+          <!-- Player list -->
+          <div class="w-full max-w-md rounded-lg border border-slate-700 bg-slate-800/30 backdrop-blur-md shadow-md p-4">
+            <ul id="list" class="max-h-64 space-y-2 overflow-auto text-sm text-white"></ul>
+          </div>
 
-        <div class="mt-8 flex justify-end">
-          <a id="start" href="/tournament/order" class="btn-menu btn-menu-sm">
-            <span class="btn-menu-inner">
-              <span class="block">${t('btn.startTournament.top')}</span>
-              <span class="block">${t('btn.startTournament.bottom')}</span>
-            </span>
-          </a>
+          <!-- Start tournament button -->
+          <div class="w-full max-w-md flex justify-end">
+            <a id="start" href="/tournament/order" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
+              <span class="btn-menu-inner">
+                <span class="block">${t('btn.startTournament.top')}</span>
+                <span class="block">${t('btn.startTournament.bottom')}</span>
+              </span>
+            </a>
+          </div>
         </div>
       </section>
     `;
@@ -78,7 +86,12 @@ class TournamentPage extends HTMLElement {
   private refresh(): void {
     const size = getTournamentSize();
     this.querySelectorAll<HTMLButtonElement>('[data-size]').forEach((b) => {
-      b.classList.toggle('bg-slate-900/60', Number(b.dataset.size) === size);
+      const isSelected = Number(b.dataset.size) === size;
+      b.classList.toggle('bg-slate-900/60', isSelected);
+      b.classList.toggle('border-white', isSelected);
+      b.classList.toggle('text-white', isSelected);
+      b.classList.toggle('opacity-100', isSelected);
+      b.classList.toggle('opacity-50', !isSelected);
     });
 
     const ul = this.querySelector<HTMLUListElement>('#list')!;
