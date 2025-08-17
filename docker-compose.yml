@@ -63,7 +63,7 @@ volumes:
 
 services:
 
-  # Backend Microservices
+  # --- Backend Microservices ---
 
   game-service:
     build: ./services/website/backend/game-service
@@ -99,6 +99,8 @@ services:
       - transcendence-network
     # ports:
     #   - "3603:3603"  # Tournament service API
+
+  # --- Frontend Web Interface ---
   
   frontend:
     build: ./services/website/frontend
@@ -114,6 +116,8 @@ services:
       - game-service
       - scoreboard-service
       - tournament-service
+
+  # --- Monitoring and Metrics ---
   
   grafana:
     build: ./services/monitoring/grafana
@@ -180,6 +184,22 @@ services:
     depends_on:
       - rproxy
 
+  blackbox-exporter:
+    image: prom/blackbox-exporter
+    container_name: blackbox-exporter
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    # ports:
+      # - "9115:9115"
+    volumes:
+      - ./services/monitoring/blackbox-exporter/blackbox.yml:/etc/blackbox/blackbox.yml:ro
+    command: ["--config.file=/etc/blackbox/blackbox.yml"]
+    depends_on:
+      - prometheus
+
+  # --- Password Management ---
+
   vault:
     build: ./services/vault
     image: vault-tc
@@ -194,6 +214,8 @@ services:
       - vault-data:/vault/data
       - ./services/vault/conf/config.hcl:/vault/config/config.hcl:ro
       - ./services/vault/certs:/vault/certs:ro
+
+  # --- Reverse Proxy and WAWS ---
   
   rproxy:
     build: ./services/rproxy
@@ -220,6 +242,8 @@ services:
       - game-service
       - scoreboard-service
       - tournament-service
+
+  # --- Logs Management ---
 
   elasticsearch:
     build: ./services/logs-management/elasticsearch

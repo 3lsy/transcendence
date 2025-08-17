@@ -2,6 +2,9 @@ global:
   scrape_interval: 15s         # How often to scrape metrics from targets (default 15s)
   evaluation_interval: 15s     # How often to evaluate rules (default 15s)
 
+rule_files:
+  - /etc/prometheus/rules.yml
+
 scrape_configs:
   - job_name: 'prometheus'     # Prometheus self-monitoring
     static_configs:
@@ -11,13 +14,40 @@ scrape_configs:
     static_configs:
       - targets: ['cadvisor:8080']
   
-  - job_name: 'fastify'
+  - job_name: 'backend_services'
     static_configs:
-      - targets: ['game-service:3601', 'scoreboard-service:3602']
+      - targets: ['game-service:3601', 'scoreboard-service:3602', 'tournament-service:3603']
 
   - job_name: 'rproxy'
     static_configs:
       - targets: ['apache-exporter:9117']
+
+  - job_name: 'container_services'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]   # Use the http_2xx module we defined
+    static_configs:
+      - targets:
+          - http://frontend:80
+          - http://game-service:3601/health
+          - http://scoreboard-service:3602/health
+          - http://tournament-service:3603/health
+          - http://rproxy:8080/server-status
+          - https://grafana:3000
+          - http://prometheus:9090
+          - https://vault:8200/v1/sys/health
+          - https://kibana:5601/api/status
+          - https://elasticsearch:9200
+          - http://logstash:9600
+          - http://cadvisor:8080
+
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
 
   # Example node_exporter scrape config
   # - job_name: 'node_exporter'

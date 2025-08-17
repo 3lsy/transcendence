@@ -11,8 +11,3 @@ storage "file" {
 }
 
 disable_mlock = true
-
-telemetry {
-  disable_hostname = true
-  prometheus_retention_time = "12h"
-}
