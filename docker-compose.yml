@@ -151,6 +151,8 @@ services:
       - ./services/monitoring/prometheus/rules.yml:/etc/prometheus/rules.yml:ro
     depends_on:
       - cadvisor
+
+  # --- Data Exporters ---
   
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -165,6 +167,18 @@ services:
       - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+
+  apache-exporter:
+    image: lusotycoon/apache-exporter
+    container_name: apache-exporter
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    # ports:
+    #   - "9117:9117"
+    command: ["--scrape_uri=http://rproxy:8080/server-status?auto"]
+    depends_on:
+      - rproxy
 
   vault:
     build: ./services/vault

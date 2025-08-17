@@ -10,6 +10,14 @@ scrape_configs:
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor:8080']
+  
+  - job_name: 'fastify'
+    static_configs:
+      - targets: ['game-service:3601', 'scoreboard-service:3602']
+
+  - job_name: 'rproxy'
+    static_configs:
+      - targets: ['apache-exporter:9117']
 
   # Example node_exporter scrape config
   # - job_name: 'node_exporter'
