@@ -7,7 +7,7 @@
     "build:ts": "tsc -p tsconfig.json",
     "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles.css --minify",
     "build": "npm run clean && npm run build:ts && npm run build:css",
-    "serve": "ws --spa index.html --rewrite '/api/game/(.*) -> http://localhost:3601/$1' '/api/tournament/(.*) -> http://localhost:3602/$1'",
+    "serve": "ws --spa index.html --rewrite '/api/game/(.*) -> http://localhost:3601/$1' '/api/tournament/(.*) -> http://localhost:3602/$1' '/api/scoreboard/list -> http://localhost:3602/list'",
     "dev": "concurrently -k -n TS,CSS,WEB \"tsc -w -p tsconfig.json\" \"tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles.css --watch\" \"npm run serve\""
   },
   "devDependencies": {
