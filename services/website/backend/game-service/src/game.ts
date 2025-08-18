@@ -15,15 +15,17 @@ export class PongGame {
   readonly ballSize = 10;
   readonly winningScore = 11;
   private gameEnded = false;
+  private finalResult: {
+    winnerSide: PlayerSide;
+    winnerAlias: string;
+    scores: { left: number; right: number };
+  } | null = null;
 
   matchId: string;
 
   ball = { x: this.width / 2, y: this.height / 2, vx: 4, vy: 2 };
   players: { left?: Player; right?: Player } = {};
   scores = { left: 0, right: 0 };
-
-  // Optional callback to notify when game ends
-  onGameEnd?: (winnerSide: PlayerSide, winnerAlias: string) => void;
 
   constructor(matchId: string) {
     this.matchId = matchId;
@@ -75,6 +77,13 @@ export class PongGame {
       const loserSide: PlayerSide = side === 'left' ? 'right' : 'left';
       const loserAlias = this.players[loserSide]?.alias || 'Unknown';
 
+      // save the game result
+      this.finalResult = {
+        winnerSide: side,
+        winnerAlias,
+        scores: { left: this.scores.left, right: this.scores.right },
+      };
+
       console.log(`Player on side ${side} (${winnerAlias}) won the game!`);
 
       // Save score to scoreboard-service
@@ -82,12 +91,6 @@ export class PongGame {
         await saveScore(winnerAlias, this.scores[side], loserAlias, this.scores[loserSide]);
       }
 
-      // Notify if callback is set
-      if (this.onGameEnd) {
-        this.onGameEnd(side, winnerAlias);
-      }
-
-      this.resetGame();
       return true;
     }
     return false;
@@ -157,6 +160,10 @@ export class PongGame {
     };
   }
 
+  getResult() {
+    return this.finalResult;
+  }
+
   getPlayers() {
     return {
       left: this.players.left?.alias ?? null,
@@ -170,7 +177,10 @@ export class PongGame {
   start() {
     if (this.isFull()) {
       this.started = true;
-      this.resetBall(); // ensures a fresh start
+      this.resetBall();
+      this.finalResult = null;
+      this.gameEnded = false;
+      this.scores = { left: 0, right: 0 };
     }
   }
 

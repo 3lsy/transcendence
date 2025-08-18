@@ -1,0 +1,37 @@
+groups:
+  - name: general.rules
+    interval: 30s
+    rules:
+      # Target down alert
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.job }} target {{ $labels.instance }} has been down for more than 1 minute."
+
+      # Frontend probe failed
+      - alert: ServiceDown
+        expr:  |
+          probe_http_status_code{job="container_services"} != 200
+          and probe_http_status_code{job="container_services"} != 401
+          and probe_http_status_code{job="container_services"} != 403
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container is not reachable"
+          description: |
+            Blackbox exporter probe to container ({{ $labels.instance }}) returned status code {{ $value }} which is not expected.
+
+      # High container CPU
+      - alert: HighContainerCPU
+        expr: rate(container_cpu_usage_seconds_total[2m]) > 0.85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.container_label_com_docker_compose_service }}"
+          description: "Container is using >85% CPU for more than 2 minutes."
