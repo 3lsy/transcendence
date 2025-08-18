@@ -23,6 +23,7 @@ async function initDb() {
     CREATE TABLE IF NOT EXISTS scores (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       created_at DATETIME DEFAULT (datetime('now', 'localtime')),
+      match_id TEXT NOT NULL,
       left_nick TEXT NOT NULL,
       left_score INTEGER NOT NULL,
       right_nick TEXT NOT NULL,
