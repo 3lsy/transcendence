@@ -19,16 +19,18 @@ export function registerScoreboardRoutes(
 
   // Save a player's score
   fastify.post('/score', async (req, reply) => {
-    const body = req.body as { left_nick: string; left_score: number; right_nick: string; right_score: number };
+    const body = req.body as { match_id: string; left_nick: string; left_score: number; right_nick: string; right_score: number };
 
     if ((!body.left_nick || typeof body.left_score !== 'number') ||
-        (!body.right_nick || typeof body.right_score !== 'number')) {
+        (!body.right_nick || typeof body.right_score !== 'number') ||
+        !body.match_id) {
       reply.status(400).send({ error: 'Invalid input' });
       return;
     }
 
     await db.run(
-      `INSERT INTO scores (left_nick, left_score, right_nick, right_score) VALUES (?, ?, ?, ?)`,
+      `INSERT INTO scores (match_id, left_nick, left_score, right_nick, right_score) VALUES (?, ?, ?, ?, ?)`,
+      body.match_id,
       body.left_nick,
       body.left_score,
       body.right_nick,

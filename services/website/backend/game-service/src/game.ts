@@ -88,7 +88,7 @@ export class PongGame {
 
       // Save score to scoreboard-service
       if (this.players[side] && this.players[loserSide]) {
-        await saveScore(winnerAlias, this.scores[side], loserAlias, this.scores[loserSide]);
+        await saveScore(this.matchId, winnerAlias, this.scores[side], loserAlias, this.scores[loserSide]);
       }
 
       return true;
