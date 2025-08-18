@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "Simple exporter for cadvisor only",
+  "description": "infrastructure Exporter",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -588,7 +588,7 @@
   "refresh": "",
   "schemaVersion": 41,
   "tags": [
-    "cadvisor",
+    "infrastructure",
     "docker"
   ],
   "templating": {
@@ -637,12 +637,12 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Cadvisor exporter",
+  "title": "Infrastructure",
   "uid": "pMEd7m0MzZ",
   "version": 1
 }

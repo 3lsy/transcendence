@@ -127,11 +127,12 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    #ports:
+    # ports:
     #  - "3000:3000"  # Grafana web interface
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./services/monitoring/grafana/conf/cAdvisor.json:/var/lib/grafana/dashboards/cAdvisor.json:ro
+      - ./services/monitoring/grafana/conf/Infrastructure.json:/var/lib/grafana/dashboards/Infrastructure.json:ro
+      - ./services/monitoring/grafana/conf/ServiceMetrics.json:/var/lib/grafana/dashboards/ServiceMetrics.json:ro
       - ./services/monitoring/grafana/conf/grafana.ini:/etc/grafana/grafana.ini:ro
       - ./services/monitoring/grafana/certs:/etc/grafana/certs:ro
     depends_on:
@@ -232,12 +233,12 @@ services:
       - ./services/rproxy/conf/redirect.conf:/etc/httpd/conf.d/redirect.conf:ro
       - ./services/rproxy/certs:/etc/pki/tls/certs:ro
     depends_on:
-      # - grafana
-      # - prometheus
-      # - vault
-      # - elasticsearch
-      # - kibana
-      # - logstash
+      - grafana
+      - prometheus
+      - vault
+      - elasticsearch
+      - kibana
+      - logstash
       - frontend
       - game-service
       - scoreboard-service
@@ -253,8 +254,8 @@ services:
     restart: unless-stopped
     networks:
       - transcendence-network
-    ports:
-      - "9200:9200"  # Elasticsearch API
+    # ports:
+    #   - "9200:9200"  # Elasticsearch API
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
       - ./services/logs-management/elasticsearch/certs/elasticsearch.key:/etc/elasticsearch/elasticsearch.key:ro
