@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "fastify": "^5.4.0",
+    "fastify-metrics": "^12.1.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   },

@@ -61,15 +61,51 @@ export function registerWebsocket(fastify: FastifyInstance, games: Map<string, P
   });
 
   return {
-    broadcastState: (matchId: string, state: any) => {
+    // Broadcast State and win
+    broadcastState: (matchId: string, foundWinner: boolean) => {
+      const clients = matchClients.get(matchId);
+      if (!clients) return;
+
+      const game = games.get(matchId);
+      if (!game) return;
+
+      for (const client of clients) {
+        if (client.readyState === client.OPEN) {
+
+          // Send the updated game state to each connected client
+          client.send(JSON.stringify({ type: 'update', state: game.getState() }));
+
+          // check if the game has ended, announce winner.
+          if (foundWinner && games.has(matchId)) {
+            const result = game.getResult();
+            if (result) {
+              client.send(JSON.stringify({
+                type: 'gameEnd',
+                winnerSide: result.winnerSide,
+                winnerAlias: result.winnerAlias,
+                scores: result.scores
+              }));
+            }
+          }
+        }
+      }
+    },
+
+    // Broadcast Quit
+    broadcastQuit: (matchId: string) => {
       const clients = matchClients.get(matchId);
       if (!clients) return;
 
       for (const client of clients) {
         if (client.readyState === client.OPEN) {
-          client.send(JSON.stringify({ type: 'update', state }));
+          client.send(JSON.stringify({
+            type: 'gameQuit',
+            message: `Match ${matchId} was quit.`
+          }));
         }
       }
+      matchClients.delete(matchId);
+      console.log(`Match ${matchId} removed from matchClients after quit`);
     }
-  };
+  }
 }

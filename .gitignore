@@ -2,7 +2,7 @@
 *.crt
 .vagrant/
 data/
-.bkp
+*.bkp
 # Node.js
 node_modules/
 dist/
