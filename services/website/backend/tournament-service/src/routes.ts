@@ -5,8 +5,8 @@ import { Tournament } from './tournament';
 // This module registers the routes for the Tournament service.
 // Routes :
 // - GET /health: Check service health
-// - POST: /new: Create a new tournament with the list of players and create the first round matches (tournament id, match id, players)
-// - GET: /status: Get the status of a tournament by id (players, matches, current round)
+// - POST: /new: Create a new tournament with the list of players and the first round matches order (tournament id, players)
+// - GET: /status: Get the status of a tournament by id (players, matches, current round), will call game to get result of the match
 // - POST: /next-game: Start the next game in a round
 // - POST: /next-round: Show the next round matchups
 // - POST: /quit: Quit a tournament in progress

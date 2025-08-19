@@ -61,4 +61,41 @@ export function registerScoreboardRoutes(
     `);
     return rows;
   });
+
+  fastify.get('/get-match', async (req, reply) => {
+    const matchId = (req.query as { matchId?: string }).matchId;
+    if (!matchId) {
+      reply.status(400).send({ error: 'Match ID is required' });
+      return;
+    }
+
+    const row = await db.get(
+      `SELECT created_at, left_nick, left_score, right_nick, right_score
+       FROM scores 
+       WHERE match_id = ?
+       LIMIT 1`,
+       matchId
+    );
+
+    if (!row) {
+      reply.code(404).send({ error: 'No result found for this matchId' });
+      return;
+    }
+
+    // get the winner of the match
+    let winner: string | null = null;
+    if (row.left_score > row.right_score) {
+      winner = row.left_nick;
+    } else if (row.right_score > row.left_score) {
+      winner = row.right_nick;
+    }
+
+    return {
+      matchId,
+      left: { nick: row.left_nick, score: row.left_score },
+      right: { nick: row.right_nick, score: row.right_score },
+      winner,
+    };
+  });
+
 }
