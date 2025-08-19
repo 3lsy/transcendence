@@ -13,11 +13,6 @@ fastify.register((instance) => {
   registerRoutes(instance, tournaments);
 });
 
-// fastify.post('/start', async (req) => {
-//   const body = req.body as { players: string[] };
-//   return { message: 'Tournament created', players: body.players };
-// });
-
 const startTournamentService = async () => {
   try {
     await fastify.listen({ port: 3603, host: '0.0.0.0' });

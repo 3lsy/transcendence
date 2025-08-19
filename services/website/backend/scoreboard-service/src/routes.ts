@@ -8,6 +8,7 @@ import { Database } from 'sqlite';
 // - GET /health: Check service health
 // - POST /score: Save a player's score
 // - GET /list: Retrieve the scoreboard list (newest matches first)
+// - GET /get-match: Retrieve match details and winner by match ID
 
 const MAX_RECORDS = 100; // Limit for storing scores
 

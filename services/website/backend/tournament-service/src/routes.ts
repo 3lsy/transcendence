@@ -1,14 +1,14 @@
 import { FastifyInstance } from 'fastify';
 import { Tournament } from './tournament';
+import { create } from 'domain';
 
 // Description:
 // This module registers the routes for the Tournament service.
 // Routes :
 // - GET /health: Check service health
 // - POST: /new: Create a new tournament with the list of players and the first round matches order (tournament id, players)
-// - GET: /status: Get the status of a tournament by id (players, matches, current round), will call game to get result of the match
-// - POST: /next-game: Start the next game in a round
-// - POST: /next-round: Show the next round matchups
+// - GET: /status: Get the status of a tournament by id (players, matches, current round)
+// - POST: /match-finished: Save the result of a match (tournament id, match id, winner side, winner alias)
 // - POST: /quit: Quit a tournament in progress
 
 // Helper function to check if a nickname is valid
@@ -77,8 +77,6 @@ export function registerRoutes(fastify: FastifyInstance, tournaments: Map<string
       tournament = new Tournament(tournamentId, nicks);
       tournaments.set(tournamentId, tournament);
     }
- 
-    // Add players to the tournament (make a function in Tournament class to handle this)
 
     // returns the tournament ID and the first round matches
     console.log(`Tournament ${tournamentId} created with first round matches:`, tournament.rounds[0]);
@@ -89,4 +87,67 @@ export function registerRoutes(fastify: FastifyInstance, tournaments: Map<string
     };
   });
 
+  // POST save match result
+  fastify.post<{ Body: { tournamentId: string; matchId: string; winnerSide: 'left' | 'right'; winnerAlias: string } }>('/match-finished', async (req, reply) => {
+    const { tournamentId, matchId, winnerSide, winnerAlias } = req.body;
+
+    if (!tournamentId || !matchId || !winnerSide || !winnerAlias) {
+      return reply.code(400).send({ error: 'All fields are required' });
+    }
+
+    // Check if tournament exists
+    const tournament = tournaments.get(tournamentId);
+    if (!tournament) {
+      return reply.code(404).send({ error: 'Tournament not found' });
+    }
+
+    // Save Winner in : Tournament instance (tournamentId) -> Rounds -> Match[currentRound][currentMatch]
+    const currentRound = tournament.currentRound;
+    const currentMatch = tournament.currentMatch;
+    if (!tournament.rounds[currentRound] || !tournament.rounds[currentRound][currentMatch]) {
+      return reply.code(404).send({ error: 'Current match not found' });
+    }
+
+    const match = tournament.rounds[currentRound][currentMatch];
+    match.winnerSide = winnerSide;
+    match.winnerAlias = winnerAlias;
+
+    tournament.winners.push(winnerAlias);
+
+    console.log(`Match result saved for tournament ${tournamentId}, match ${matchId}:`, { winnerSide, winnerAlias });
+
+    // Update indexes and create next round if needed
+    tournament.matchesLeftInRound--;
+    if (tournament.matchesLeftInRound <= 0) {
+      tournament.createRound();
+    }
+    else {
+      tournament.currentMatch++;
+    }
+      
+    // Respond with success
+    return { message: 'Match result saved successfully' };
+  });
+
+  // Get tournament status
+  fastify.get<{ Params: { tournamentId: string } }>('/status/:tournamentId', async (req, reply) => {
+    const { tournamentId } = req.params;
+
+    // Check if tournament exists
+    const tournament = tournaments.get(tournamentId);
+    if (!tournament) {
+      return reply.code(404).send({ error: 'Tournament not found' });
+    }
+
+    // Return tournament status
+    return {
+      id: tournament.id,
+      players: tournament.players,
+      currentRound: tournament.currentRound,
+      currentMatch: tournament.currentMatch,
+      matchesLeft: tournament.matchesLeftInRound,
+      roundsLeft: tournament.roundsLeft,
+      rounds: tournament.rounds
+    };
+  });
 }
