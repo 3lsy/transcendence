@@ -16,6 +16,7 @@ function isValidNickname(nickname: string): boolean {
 // - POST /move: Move paddle up or down
 // - GET /state: Get the current game state
 // - POST: /new: Create a new game with two players and start it immediately
+// - POST: /new-tournament-match: Create a new match for a tournament with two players and start it immediately
 // - POST: /quit: Quit a match in progress
 
 export function registerRoutes(fastify: FastifyInstance, games: Map<string, PongGame>, wsHandler: any) {
@@ -46,8 +47,7 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
     return game.getState();
   });
 
-  // New game creation instead of joining one player at a time and then starting.
-  // Now when you click "Start" in the UI, it creates a new match with two players.
+  // New game creation, creates a new match with two players and starts it immediately
   fastify.post<{ Body: { nick_left: string; nick_right: string } }>('/new', async (req, reply) => {
     const { nick_left, nick_right } = req.body;
     if (!nick_left || !nick_right) {
@@ -74,6 +74,49 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
     let game = games.get(matchId);
     if (!game) {
       game = new PongGame(matchId);
+      games.set(matchId, game);
+    }
+
+    //Add both players to the game
+    const sideLeft = game.addPlayer(nick_left);
+    const sideRight = game.addPlayer(nick_right);
+    if (!sideLeft || !sideRight) {
+      return reply.code(403).send({ error: 'Game full' });
+    }
+
+    game.start(); // Start the game immediately with both players
+    console.log(`New match ${matchId} started with players ${nick_left} (left) and ${nick_right} (right)`);
+
+    return { matchId };
+  });
+
+  // New tournament game creation, creates a new match with two players and starts it immediately
+  fastify.post<{ Body: { tournamentId: string; nick_left: string; nick_right: string } }>('/new-tournament-match', async (req, reply) => {
+    const { tournamentId, nick_left, nick_right } = req.body;
+    if (!tournamentId || !nick_left || !nick_right) {
+      return reply.code(400).send({ error: 'Both nicknames and tournamentId are required' });
+    }
+
+    // Check if nicknames are different
+    if (nick_left === nick_right) {
+      return reply.code(400).send({ error: 'Nicknames must be different' });
+    }
+
+    // Check if nicknames are valid
+    if (!isValidNickname(nick_left)) {
+      return reply.code(400).send({ error: `Invalid nickname: ${nick_left}, must be alphanumeric, between 3 to 8 characters, and not empty` });
+    }
+    if (!isValidNickname(nick_right)) {
+      return reply.code(400).send({ error: `Invalid nickname: ${nick_right}, must be alphanumeric, between 3 to 8 characters, and not empty` });
+    }
+
+    const matchId = `match-${Date.now()}`; // Simple match ID generation
+    console.log(`Creating new match ${matchId} with players ${nick_left} and ${nick_right}`);
+
+    // Create a new game instance
+    let game = games.get(matchId);
+    if (!game) {
+      game = new PongGame(matchId, tournamentId);
       games.set(matchId, game);
     }
 

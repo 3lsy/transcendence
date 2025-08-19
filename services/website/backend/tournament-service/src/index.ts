@@ -1,13 +1,17 @@
 import Fastify from 'fastify';
+import fastifyMetrics from 'fastify-metrics';
+import { Tournament } from './tournament';
+import { registerRoutes } from './routes';
 
 const fastify = Fastify({ logger: true });
+fastify.register(fastifyMetrics, { endpoint: '/metrics' });
 
-fastify.post('/start', async (req) => {
-  const body = req.body as { players: string[] };
-  return { message: 'Tournament created', players: body.players };
+// Store all active tournaments by tournamentId
+const tournaments = new Map<string, Tournament>();
+
+fastify.register((instance) => {
+  registerRoutes(instance, tournaments);
 });
-
-fastify.get('/health', async () => ({ status: 'Tournament Service OK' }));
 
 const startTournamentService = async () => {
   try {
