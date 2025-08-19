@@ -7,6 +7,7 @@ import { create } from 'domain';
 // Routes :
 // - GET /health: Check service health
 // - POST: /new: Create a new tournament with the list of players and the first round matches order (tournament id, players)
+// - POST: /new-match: Create a new match in the current round (tournament id)
 // - GET: /status: Get the status of a tournament by id (players, matches, current round)
 // - POST: /match-finished: Save the result of a match (tournament id, match id, winner side, winner alias)
 // - POST: /quit: Quit a tournament in progress
@@ -85,6 +86,54 @@ export function registerRoutes(fastify: FastifyInstance, tournaments: Map<string
       tournamentId,
       firstRound: tournament.rounds[0]
     };
+  });
+
+  // POST /new-match
+  fastify.post<{ Body: { tournamentId: string } }>('/new-match', async (req, reply) => {
+    const { tournamentId } = req.body;
+
+    // check if tournament exists
+    const tournament = tournaments.get(tournamentId);
+    if (!tournament) {
+      return reply.code(404).send({ error: 'Tournament not found' });
+    }
+
+    // check which round and which match we need to create
+    const currentRound = tournament.currentRound;
+    const currentMatch = tournament.currentMatch;
+    if (currentRound < 0 || currentRound >= tournament.rounds.length) {
+      return reply.code(400).send({ error: 'No current round available' });
+    }
+    if (currentMatch < 0 || currentMatch >= tournament.rounds[currentRound].length) {
+      return reply.code(400).send({ error: 'No current match available' });
+    }
+    if (!tournament.rounds[currentRound][currentMatch]) {
+      return reply.code(404).send({ error: 'Current match not found' });
+    }
+
+    const match = tournament.rounds[currentRound][currentMatch];
+
+    console.log(`Creating new match for tournament ${tournamentId}, round ${currentRound}, match ${currentMatch}`, match);
+
+    try {
+      const res = await fetch('http://game-service:3601/new-tournament-match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tournamentId, nick_left: match.left, nick_right: match.right }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Failed to create new match', text);
+        return reply.code(500).send({ error: 'Failed to create new match' });
+      }
+      const data = await res.json() as { matchId: string };
+      console.log(`New match created with ID: ${data.matchId}`);
+      return { matchId: data.matchId, left: match.left, right: match.right };
+    } catch (error) {
+      console.error('Error creating new match:', error);
+      return reply.code(500).send({ error: 'Error creating new match' });
+    }
   });
 
   // POST save match result
