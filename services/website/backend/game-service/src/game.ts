@@ -22,13 +22,21 @@ export class PongGame {
   } | null = null;
 
   matchId: string;
+  tournamentId: string | null = null; 
 
   ball = { x: this.width / 2, y: this.height / 2, vx: 4, vy: 2 };
   players: { left?: Player; right?: Player } = {};
   scores = { left: 0, right: 0 };
 
-  constructor(matchId: string) {
+  // overload signatures
+  constructor(matchId: string);
+  constructor(matchId: string, tournamentId: string);
+
+  constructor(matchId: string, tournamentId?: string) {
     this.matchId = matchId;
+    if (tournamentId) {
+      this.tournamentId = tournamentId;
+    }
   }
 
   async update(): Promise<boolean> {
@@ -88,7 +96,37 @@ export class PongGame {
 
       // Save score to scoreboard-service
       if (this.players[side] && this.players[loserSide]) {
-        await saveScore(winnerAlias, this.scores[side], loserAlias, this.scores[loserSide]);
+        if (side === 'left') {
+          await saveScore(this.matchId, winnerAlias, this.scores[side], loserAlias, this.scores[loserSide]);
+        }
+        else {
+          await saveScore(this.matchId, loserAlias, this.scores[loserSide], winnerAlias, this.scores[side]);
+        }
+      }
+
+      if (this.tournamentId) {
+        // fetch POST request to tournament service to save the match result
+        try {
+          const res = await fetch('http://tournament-service:3603/match-finished', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              tournamentId: this.tournamentId,
+              matchId: this.matchId,
+              winnerSide: side,
+              winnerAlias
+              }),
+          });
+
+          if (!res.ok) {
+            console.error('Failed to save match result in tournament service');
+          } else {
+            console.log('Match result saved in tournament service');
+          }
+        }
+        catch (error) {
+          console.error('Error saving match result in tournament service:', error);
+        }
       }
 
       return true;
