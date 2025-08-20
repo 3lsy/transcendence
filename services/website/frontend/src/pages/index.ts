@@ -1,4 +1,4 @@
-import { getLang, setLang, t } from '../lib/i18n.js';
+import { Lang, getLang, setLang, t } from '../lib/i18n.js';
 
 const tag = 'page-home';
 
@@ -48,8 +48,10 @@ class HomePage extends HTMLElement {
     `;
 
     this.querySelector<HTMLButtonElement>('#lang')?.addEventListener('click', async () => {
-      const next = lang.startsWith('en') ? 'fr' : 'en';
-      await setLang(next as any);
+      const languages: Lang[] = ['en', 'fr', 'es'];
+      const currentIndex = languages.indexOf(lang);
+      const nextIndex = (currentIndex + 1) % languages.length;
+      await setLang(languages[nextIndex]);
       this.render();
     });
   }
