@@ -1,4 +1,5 @@
 import { t } from '../lib/i18n.js';
+import '../components/page-header.js';
 
 const tag = 'page-scores';
 
@@ -25,14 +26,14 @@ class ScoresPage extends HTMLElement {
       this.render();
 
       const response = await fetch('/api/scoreboard/list');
-      if (!response.ok) throw new Error(t('scores.error.fetch'));
+      if (!response.ok) throw new Error(t('error.scores.fetch'));
 
       this.scores = await response.json();
       this.loading = false;
       this.error = null;
     } catch (err) {
       this.loading = false;
-      this.error = err instanceof Error ? err.message : t('scores.error.unknown');
+      this.error = err instanceof Error ? err.message : t('error.scores.unknown');
     }
     this.render();
   }
@@ -40,15 +41,7 @@ class ScoresPage extends HTMLElement {
   private render(): void {
     this.innerHTML = `
     <section class="min-h-screen flex flex-col px-4 py-10">
-      <div class="mb-10 flex items-center justify-between">
-        <a href="/" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
-          <span class="btn-menu-inner">
-            <span class="block">${t('btn.back.top')}</span>
-            <span class="block">${t('btn.back.bottom')}</span>
-          </span>
-        </a>
-        <h2 class="font-pong text-4xl tracking-wide text-white">${t('scores.title')}</h2>
-      </div>
+      <page-header title="${t('scores.title')}" back="/"></page-header>
 
       <div class="flex-1 flex flex-col items-center justify-center space-y-8">
         <div class="w-full max-w-3xl space-y-4">

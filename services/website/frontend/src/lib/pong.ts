@@ -49,8 +49,6 @@ export class PongGame {
   private ballX = 0;
   private ballY = 0;
   private readonly ballSize = 10;
-  private vx = 0;
-  private vy = 0;
   private readonly padding = 20 - this.paddleW - this.ballSize;
 
   private updateGameState(state: GameState) {
@@ -64,8 +62,6 @@ export class PongGame {
     if (state.ball) {
       this.ballX = state.ball.x;
       this.ballY = state.ball.y;
-      this.vx = state.ball.vx;
-      this.vy = state.ball.vy;
     }
 
     // Update scores

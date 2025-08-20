@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "dev": "SCOREBOARD_SERVICE_URL=http://localhost:3602 nodemon --watch src --exec ts-node src/index.ts"
+    "dev": "SCOREBOARD_SERVICE_URL=http://localhost:3602 TOURNAMENT_SERVICE_URL=http://localhost:3603 nodemon --watch src --exec ts-node src/index.ts"
   },
   "keywords": [],
   "author": "",
