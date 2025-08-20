@@ -98,6 +98,11 @@ export function registerRoutes(fastify: FastifyInstance, tournaments: Map<string
       return reply.code(404).send({ error: 'Tournament not found' });
     }
 
+    // check if tournament already ended
+    if (tournament.ended) {
+      return reply.code(400).send({ error: 'Tournament has already ended. No new matches can be created.' });
+    }
+
     // check which round and which match we need to create
     const currentRound = tournament.currentRound;
     const currentMatch = tournament.currentMatch;
@@ -128,6 +133,7 @@ export function registerRoutes(fastify: FastifyInstance, tournaments: Map<string
         return reply.code(500).send({ error: 'Failed to create new match' });
       }
       const data = await res.json() as { matchId: string };
+      match.matchId = data.matchId; // Save the matchID in rounds
       console.log(`New match created with ID: ${data.matchId}`);
       return { matchId: data.matchId, left: match.left, right: match.right };
     } catch (error) {
@@ -168,9 +174,17 @@ export function registerRoutes(fastify: FastifyInstance, tournaments: Map<string
     // Update indexes and create next round if needed
     tournament.matchesLeftInRound--;
     if (tournament.matchesLeftInRound <= 0) {
-      tournament.createRound();
-    }
-    else {
+      if (tournament.winners.length === 1) {
+        // Tournament has a final winner
+        const finalWinner = tournament.winners[0];
+        tournament.ended = true;
+        tournament.finishedAt = Date.now();
+        console.log(`Tournament ${tournamentId} has ended. Winner: ${finalWinner}`);
+        return { message: `Tournament ended. Winner: ${finalWinner}`, winner: finalWinner };
+      } else {
+        tournament.createRound();
+      }
+    } else {
       tournament.currentMatch++;
     }
       
@@ -196,7 +210,49 @@ export function registerRoutes(fastify: FastifyInstance, tournaments: Map<string
       currentMatch: tournament.currentMatch,
       matchesLeft: tournament.matchesLeftInRound,
       roundsLeft: tournament.roundsLeft,
-      rounds: tournament.rounds
+      rounds: tournament.rounds,
+      ended: tournament.ended
     };
   });
+
+  // POST /quit: Quit the tournament in progress (and quit the current match where the /quit was called)
+  fastify.post<{ Body: { tournamentId: string } }>('/quit', async (req, reply) => {
+    const { tournamentId } = req.body;
+    const tournament = tournaments.get(tournamentId);
+
+    if (!tournament) {
+      return reply.code(404).send({ error: 'Tournament not found' });
+    }
+
+    // check the current match for a matchId
+    const currentRound = tournament.currentRound;
+    const currentMatch = tournament.currentMatch;
+    const match = tournament.rounds[currentRound]?.[currentMatch];
+
+    if (match?.matchId) {
+      try {
+        const res = await fetch('http://game-service:3601/quit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ matchId: match.matchId }),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          console.error(`Failed to quit match ${match.matchId} in tournament`, text);
+        } else {
+          console.log(`Match ${match.matchId} quit successfully in tournament: ${tournamentId}`);
+        }
+      } catch (error) {
+        console.error('Error calling game service /quit:', error);
+      }
+    }
+
+    tournament.ended = true;
+    tournaments.delete(tournamentId); // removes it from active tournaments
+    console.log(`Tournament ${tournamentId} has been quit. Cleaning up ...`);
+
+    return { message: `Tournament ${tournamentId} has been ended.` };
+  });
+
 }

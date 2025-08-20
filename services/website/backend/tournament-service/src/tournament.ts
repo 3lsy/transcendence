@@ -16,6 +16,8 @@ export class Tournament {
     currentMatch: number;
     matchesLeftInRound: number = 0;
     roundsLeft: number = 0;
+    ended: boolean = false;
+    finishedAt?: number;
 
     constructor(id: string, players: string[]) {
         this.id = id;
@@ -25,7 +27,7 @@ export class Tournament {
         this.currentRound = -1;
         this.currentMatch = 0;
 
-        this.roundsLeft = Math.sqrt(players.length);
+        this.roundsLeft = Math.log2(players.length);
         this.createRound();
     }
 
