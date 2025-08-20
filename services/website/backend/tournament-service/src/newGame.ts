@@ -1,12 +1,12 @@
-import { fetch } from 'undici';
-
+import path from 'node:path';
+const GAME_SERVICE_URL = process.env.GAME_SERVICE_URL ?? "http://game-service:3601";
 // This function will call the game service to create a new game
 export async function newGame(
   nick_left: string, 
   nick_right: string
 ) : Promise<string | null> {
   try {
-    const res = await fetch('http://game-service:3601/new', {
+    const res = await fetch(path.join(GAME_SERVICE_URL, 'new'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nick_left, nick_right }),

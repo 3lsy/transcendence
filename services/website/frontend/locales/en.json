@@ -34,10 +34,15 @@
     "quit": {
       "top": "QUIT",
       "bottom": "GAME"
+    },
+    "next": {
+      "top": "Next",
+      "bottom": "Match"
     }
   },
   "common": {
-    "remove": "Remove"
+    "remove": "Remove",
+    "loading": "Loading..."
   },
   "game": {
     "title": "GAME",
@@ -54,20 +59,39 @@
       "generic": "Something went wrong.",
       "quitFailed": "Failed to quit the game.",
       "disconnected": "Connection lost. Game ended."
+    },
+    "alias": {
+      "empty": "Nickname cannot be empty.",
+      "invalid": "Nickname must be 3-8 alphanumeric characters."
+    },
+    "scores": {
+      "fetch": "Failed to fetch matches",
+      "unknown": "An unexpected error occurred"
+    },
+    "tournament": {
+      "noId": "Tournament ID is missing.",
+      "fetchFailed": "Failed to fetch tournament data.",
+      "noMatches": "No matches found in the tournament.",
+      "statusFailed": "Failed to get tournament status.",
+      "nextMatchFailed": "Could not start the next match.",
+      "noMatchId": "Wrong data from server."
     }
   },
   "tournament": {
     "title": "TOURNAMENT",
     "numberOfPlayers": "Number of Players",
-    "firstRound": "First round order"
+    "firstRound": "First round order",
+    "instructions": "Here are the matchups for the first round.",
+    "tryAgain": "Try again",
+    "nextMatch": "Next match is ready",
+    "nextRound": "Next round is ready",
+    "round": "Round {number}",
+    "ended": "Tournament end! Winer: {name}",
+    "match": "Match {number}"
   },
   "scores": {
     "title": "RECENT MATCHES",
     "loading": "Loading matches...",
-    "empty": "No matches played yet",
-    "error": {
-      "fetch": "Failed to fetch matches",
-      "unknown": "An unexpected error occurred"
-    }
+    "empty": "No matches played yet"
   }
 }

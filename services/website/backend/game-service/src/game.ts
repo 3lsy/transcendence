@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { saveScore } from "./saveScore";
 
 type PlayerSide = 'left' | 'right';
@@ -7,6 +8,8 @@ interface Player {
   side: PlayerSide;
   y: number; // paddle Y position
 }
+
+const TOURNAMENT_SERVICE_URL = process.env.TOURNAMENT_SERVICE_URL ?? "http://tournament-service:3603"
 
 export class PongGame {
   readonly width = 800;
@@ -107,7 +110,7 @@ export class PongGame {
       if (this.tournamentId) {
         // fetch POST request to tournament service to save the match result
         try {
-          const res = await fetch('http://tournament-service:3603/match-finished', {
+          const res = await fetch(path.join(TOURNAMENT_SERVICE_URL, 'match-finished'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
