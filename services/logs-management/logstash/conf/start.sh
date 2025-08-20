@@ -96,8 +96,4 @@ else
   done
 fi
 
-# Print elastic password
-echo "Elastic Password for Logstash: $ELASTIC_PASSWORD"
-echo "Logstash keystore password: $LOGSTASH_KEYSTORE_PASS"
-
 exec /usr/share/logstash/bin/logstash
