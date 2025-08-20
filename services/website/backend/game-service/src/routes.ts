@@ -144,6 +144,7 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
 
     game.quit();           // stops the game immediately
     games.delete(matchId); // removes it from active matches
+    console.log(`Match ${matchId} has been quit. Cleaning up ...`);
 
     wsHandler.broadcastQuit(matchId);
 
