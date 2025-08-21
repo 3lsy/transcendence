@@ -36,6 +36,7 @@ class AliasInput extends HTMLElement {
     });
     this.querySelector<HTMLButtonElement>('#random-alias')?.addEventListener('click', () => {
       aliasInput.value = generateRandomName();
+      aliasInput.dispatchEvent(new Event('input'));
       aliasInput.focus();
     });
   }
