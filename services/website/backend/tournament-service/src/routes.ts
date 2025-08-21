@@ -1,6 +1,8 @@
+import path from 'node:path';
 import { FastifyInstance } from 'fastify';
 import { Tournament } from './tournament';
-import { create } from 'domain';
+
+const GAME_SERVICE_URL = process.env.GAME_SERVICE_URL ?? "http://game-service:3601";
 
 // Description:
 // This module registers the routes for the Tournament service.
@@ -121,7 +123,7 @@ export function registerRoutes(fastify: FastifyInstance, tournaments: Map<string
     console.log(`Creating new match for tournament ${tournamentId}, round ${currentRound}, match ${currentMatch}`, match);
 
     try {
-      const res = await fetch('http://game-service:3601/new-tournament-match', {
+      const res = await fetch(path.join(GAME_SERVICE_URL, 'new-tournament-match'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tournamentId, nick_left: match.left, nick_right: match.right }),

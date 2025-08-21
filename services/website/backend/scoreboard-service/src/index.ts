@@ -7,11 +7,13 @@ import { registerScoreboardRoutes } from './routes';
 
 let db: Database<sqlite3.Database, sqlite3.Statement>;
 
+const DB_PATH = process.env.NODE_ENV === 'production' ? '/app/data' : process.cwd();
+
 async function initDb() {
 
-  const dbPath = path.join('/app/data', 'scoreboard.db');
+  const dbPath = path.join(DB_PATH, 'scoreboard.db');
 
-  await import('fs/promises').then(fs => fs.mkdir('/app/data', { recursive: true }));
+  await import('fs/promises').then(fs => fs.mkdir(DB_PATH, { recursive: true }));
   console.log(`Initializing database at ${dbPath}`);
 
   db = await open({

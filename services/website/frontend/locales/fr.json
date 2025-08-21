@@ -1,31 +1,98 @@
 {
-  "home": { "title": "PONG" },
-  "btn": {
-    "play": { "top": "JOUER", "bottom": "PARTIE" },
-    "tournament": { "top": "TOURNOI", "bottom": "" },
-    "scores": { "top": "MEILLEURS", "bottom": "SCORES" },
-    "start": { "top": "DÉMARRER", "bottom": "PARTIE" },
-    "startTournament": { "top": "DÉMARRER", "bottom": "TOURNOI" },
-    "back": { "top": "RETOUR", "bottom": "MENU" },
-    "home": { "top": "ACCUEIL", "bottom": "MENU" },
-    "quit": { "top": "QUITTER", "bottom": "PARTIE" },
-    "restart": { "top": "REJOUER", "bottom": "PARTIE" },
-    "clear": { "top": "EFFACER", "bottom": "SCORES" }
+  "home": {
+    "title": "PONG"
   },
-  "common": { "remove": "Supprimer" },
+  "btn": {
+    "play": {
+      "top": "JOUER",
+      "bottom": "PARTIE"
+    },
+    "tournament": {
+      "top": "TOURNOI",
+      "bottom": ""
+    },
+    "scores": {
+      "top": "SCORES",
+      "bottom": ""
+    },
+    "start": {
+      "top": "DÉMARRER",
+      "bottom": "PARTIE"
+    },
+    "startTournament": {
+      "top": "DÉMARRER",
+      "bottom": "TOURNOI"
+    },
+    "back": {
+      "top": "RETOUR",
+      "bottom": "MENU"
+    },
+    "home": {
+      "top": "ACCUEIL",
+      "bottom": "MENU"
+    },
+    "quit": {
+      "top": "QUITTER",
+      "bottom": "PARTIE"
+    },
+    "next": {
+      "top": "SUIVANT",
+      "bottom": "MATCH"
+    }
+  },
+  "common": {
+    "remove": "Supprimer",
+    "loading": "Chargement..."
+  },
   "game": {
     "title": "PARTIE",
     "alias": "Pseudo",
     "controls": "Commandes : Gauche = W/S, Droite = ↑/↓ · Premier à {target} gagne",
-    "win": "{name} gagne !"
+    "win": "{name} gagne !",
+    "quit": "La partie a été quittée.",
+    "loading": "Chargement...",
+    "unknownPlayer": "Inconnu"
+  },
+  "error": {
+    "game": {
+      "notFound": "Partie introuvable.",
+      "generic": "Une erreur est survenue.",
+      "quitFailed": "Impossible de quitter la partie.",
+      "disconnected": "Connexion perdue. Partie terminée."
+    },
+    "alias": {
+      "empty": "Le pseudo ne peut pas être vide.",
+      "invalid": "Le pseudo doit comporter 3 à 8 caractères alphanumériques."
+    },
+    "scores": {
+      "fetch": "Impossible de récupérer les matchs",
+      "unknown": "Une erreur inattendue s'est produite"
+    },
+    "tournament": {
+      "noId": "L'identifiant du tournoi est manquant.",
+      "fetchFailed": "Échec du chargement des données du tournoi.",
+      "noMatches": "Aucun match trouvé dans le tournoi.",
+      "statusFailed": "Échec de l'obtention du statut du tournoi.",
+      "nextMatchFailed": "Impossible de lancer le match suivant.",
+      "noMatchId": "Données incorrectes du serveur."
+    }
   },
   "tournament": {
     "title": "TOURNOI",
     "numberOfPlayers": "Nombre de joueurs",
-    "firstRound": "Ordre du premier tour"
+    "firstRound": "Ordre du premier tour",
+    "instructions": "Voici les affrontements du premier tour.",
+    "tryAgain": "Réessayer",
+    "nextMatch": "Le prochain match est prêt",
+    "nextRound": "Le prochain tour est prêt",
+    "round": "Tour {number}",
+    "ended": "Tournoi terminé ! Vainqueur : {name}",
+    "match": "Match {number}",
+    "noFutureRounds": "Aucun tour futur disponible."
   },
   "scores": {
-    "title": "MEILLEURS SCORES",
-    "empty": "Aucun score"
+    "title": "MATCHS RÉCENTS",
+    "loading": "Chargement des matchs...",
+    "empty": "Aucun match joué"
   }
 }
