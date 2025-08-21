@@ -1,4 +1,4 @@
-# My Transcendence
+# Transcendence
 
 ## Infrastructure Architecture Diagram
 
