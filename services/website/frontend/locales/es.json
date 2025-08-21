@@ -1,0 +1,98 @@
+{
+  "home": {
+    "title": "PONG"
+  },
+  "btn": {
+    "play": {
+      "top": "JUGAR",
+      "bottom": "PARTIDA"
+    },
+    "tournament": {
+      "top": "TORNEO",
+      "bottom": ""
+    },
+    "scores": {
+      "top": "PUNTUACIONES",
+      "bottom": ""
+    },
+    "start": {
+      "top": "INICIAR",
+      "bottom": "PARTIDA"
+    },
+    "startTournament": {
+      "top": "INICIAR",
+      "bottom": "TORNEO"
+    },
+    "back": {
+      "top": "ATRÁS",
+      "bottom": "MENÚ"
+    },
+    "home": {
+      "top": "INICIO",
+      "bottom": "MENÚ"
+    },
+    "quit": {
+      "top": "SALIR",
+      "bottom": "PARTIDA"
+    },
+    "next": {
+      "top": "Siguiente",
+      "bottom": "Partido"
+    }
+  },
+  "common": {
+    "remove": "Eliminar",
+    "loading": "Cargando..."
+  },
+  "game": {
+    "title": "PARTIDA",
+    "alias": "Alias",
+    "controls": "Controles: Izquierda = W/S, Derecha = ↑/↓ · El primero en llegar a {target} gana",
+    "win": "¡{name} gana!",
+    "quit": "La partida fue abandonada.",
+    "loading": "Cargando...",
+    "unknownPlayer": "Desconocido"
+  },
+  "error": {
+    "game": {
+      "notFound": "Partida no encontrada.",
+      "generic": "Algo salió mal.",
+      "quitFailed": "Error al abandonar la partida.",
+      "disconnected": "Conexión perdida. Partida finalizada."
+    },
+    "alias": {
+      "empty": "El apodo no puede estar vacío.",
+      "invalid": "El apodo debe tener de 3 a 8 caracteres alfanuméricos."
+    },
+    "scores": {
+      "fetch": "Error al obtener partidos",
+      "unknown": "Ocurrió un error inesperado"
+    },
+    "tournament": {
+      "noId": "Falta el ID del torneo.",
+      "fetchFailed": "Error al obtener datos del torneo.",
+      "noMatches": "No se encontraron partidos en el torneo.",
+      "statusFailed": "Error al obtener el estado del torneo.",
+      "nextMatchFailed": "No se pudo iniciar el siguiente partido.",
+      "noMatchId": "Datos incorrectos del servidor."
+    }
+  },
+  "tournament": {
+    "title": "TORNEO",
+    "numberOfPlayers": "Número de Jugadores",
+    "firstRound": "Orden de la primera ronda",
+    "instructions": "Aquí están los enfrentamientos para la primera ronda.",
+    "tryAgain": "Intentar de nuevo",
+    "nextMatch": "El siguiente partido está listo",
+    "nextRound": "La próxima ronda está lista",
+    "round": "Ronda {number}",
+    "ended": "¡Torneo terminado! Ganador: {name}",
+    "match": "Partido {number}",
+    "noFutureRounds": "No hay rondas futuras disponibles."
+  },
+  "scores": {
+    "title": "PARTIDOS RECIENTES",
+    "loading": "Cargando partidos...",
+    "empty": "No se han jugado partidos todavía"
+  }
+}
