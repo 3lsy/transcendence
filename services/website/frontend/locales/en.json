@@ -74,8 +74,7 @@
       "noMatches": "No matches found in the tournament.",
       "statusFailed": "Failed to get tournament status.",
       "nextMatchFailed": "Could not start the next match.",
-      "noMatchId": "Wrong data from server.",
-      "noFutureRounds": "No future rounds available."
+      "noMatchId": "Wrong data from server."
     }
   },
   "tournament": {
@@ -88,7 +87,8 @@
     "nextRound": "Next round is ready",
     "round": "Round {number}",
     "ended": "Tournament end! Winer: {name}",
-    "match": "Match {number}"
+    "match": "Match {number}",
+    "noFutureRounds": "No future rounds available."
   },
   "scores": {
     "title": "RECENT MATCHES",

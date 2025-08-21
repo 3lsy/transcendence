@@ -241,20 +241,20 @@ class GamePage extends HTMLElement {
       <div class="flex-1 flex items-center justify-center">
         <div class="relative w-full max-w-5xl aspect-video overflow-hidden rounded-lg border border-slate-700 bg-black shadow-md">
           <canvas id="c" class="block h-full w-full bg-black"></canvas>
+        </div>
+      </div>
 
-          <!-- Overlay -->
-          <div id="ol" class="pointer-events-none absolute inset-0 hidden grid place-items-center">
-            <div class="pointer-events-auto rounded-xl border-2 border-slate-300 bg-slate-900/90 p-6 text-center max-w-md">
-              <div id="msg" class="mb-4 text-2xl font-bold text-white"></div>
-              <div id="tournament-actions" class="flex flex-wrap items-center justify-center gap-4">
-                <a href="/" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
-                  <span class="btn-menu-inner">
-                    <span class="block">${t('btn.home.top')}</span>
-                    <span class="block">${t('btn.home.bottom')}</span>
-                  </span>
-                </a>
-              </div>
-            </div>
+      <!-- Overlay -->
+      <div id="ol" class="pointer-events-none absolute inset-0 z-50 hidden grid place-items-center">
+        <div class="pointer-events-auto rounded-xl border-2 border-slate-300 bg-slate-900/90 p-6 text-center max-w-md">
+          <div id="msg" class="mb-4 text-2xl font-bold text-white"></div>
+          <div id="tournament-actions" class="flex flex-wrap items-center justify-center gap-4">
+            <a href="/" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
+              <span class="btn-menu-inner">
+                <span class="block">${t('btn.home.top')}</span>
+                <span class="block">${t('btn.home.bottom')}</span>
+              </span>
+            </a>
           </div>
         </div>
       </div>

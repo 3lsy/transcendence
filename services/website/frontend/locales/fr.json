@@ -74,8 +74,7 @@
       "noMatches": "Aucun match trouvé dans le tournoi.",
       "statusFailed": "Échec de l'obtention du statut du tournoi.",
       "nextMatchFailed": "Impossible de lancer le match suivant.",
-      "noMatchId": "Données incorrectes du serveur.",
-      "noFutureRounds": "Aucun tour futur disponible."
+      "noMatchId": "Données incorrectes du serveur."
     }
   },
   "tournament": {
@@ -88,7 +87,8 @@
     "nextRound": "Le prochain tour est prêt",
     "round": "Tour {number}",
     "ended": "Tournoi terminé ! Vainqueur : {name}",
-    "match": "Match {number}"
+    "match": "Match {number}",
+    "noFutureRounds": "Aucun tour futur disponible."
   },
   "scores": {
     "title": "MATCHS RÉCENTS",
