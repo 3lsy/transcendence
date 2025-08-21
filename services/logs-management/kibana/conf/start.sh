@@ -43,22 +43,10 @@ vault_cert_login()
   echo "Vault login successful. Token: $VAULT_TOKEN"
 }
 
-# wait_for_elasticsearch_ready() {
-#   echo "Waiting for Elasticsearch cluster to be ready..."
-#   until curl -s -k -u elastic:$ELASTIC_PASSWORD https://elasticsearch:9200/_cluster/health | jq -e '.status == "green" or .status == "yellow"' > /dev/null; do
-#     echo "Elasticsearch cluster not ready yet... waiting 5s"
-#     sleep 5
-#   done
-#   echo "Elasticsearch cluster is ready."
-# }
-
 # --- MAIN ---
 
 wait_for_vault_ready
 vault_cert_login "/etc/kibana/kibana.crt" "/etc/kibana/kibana.key"
-
-# Wait for ES before fetching token (security index must be available)
-# wait_for_elasticsearch_ready
 
 # Get the Kibana service user token from Vault
 until KIBANA_TOKEN=$(vault kv get -field=kibana_service_token secret/kibana); do

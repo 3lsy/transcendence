@@ -82,12 +82,12 @@ if [ ! -f /usr/share/elasticsearch/data/elasticsearch.setup ]; then
     sleep 2
   done
 
-  cp /etc/elasticsearch/service_tokens /usr/share/elasticsearch/data/service_tokens
+  cp -v /etc/elasticsearch/service_tokens /usr/share/elasticsearch/data/service_tokens
 
 else
   echo "Elasticsearch setup file already exists. Skipping first time setup."
   
-  cp /usr/share/elasticsearch/data/service_tokens /etc/elasticsearch/service_tokens
+  cp -v /usr/share/elasticsearch/data/service_tokens /etc/elasticsearch/service_tokens
 
 fi
 
