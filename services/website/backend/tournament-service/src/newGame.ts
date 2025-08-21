@@ -1,4 +1,5 @@
 import path from 'node:path';
+
 const GAME_SERVICE_URL = process.env.GAME_SERVICE_URL ?? "http://game-service:3601";
 // This function will call the game service to create a new game
 export async function newGame(

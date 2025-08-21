@@ -34,10 +34,15 @@
     "quit": {
       "top": "QUITTER",
       "bottom": "PARTIE"
+    },
+    "next": {
+      "top": "SUIVANT",
+      "bottom": "MATCH"
     }
   },
   "common": {
-    "remove": "Supprimer"
+    "remove": "Supprimer",
+    "loading": "Chargement..."
   },
   "game": {
     "title": "PARTIE",
@@ -54,20 +59,40 @@
       "generic": "Une erreur est survenue.",
       "quitFailed": "Impossible de quitter la partie.",
       "disconnected": "Connexion perdue. Partie terminée."
+    },
+    "alias": {
+      "empty": "Le pseudo ne peut pas être vide.",
+      "invalid": "Le pseudo doit comporter 3 à 8 caractères alphanumériques."
+    },
+    "scores": {
+      "fetch": "Impossible de récupérer les matchs",
+      "unknown": "Une erreur inattendue s'est produite"
+    },
+    "tournament": {
+      "noId": "L'identifiant du tournoi est manquant.",
+      "fetchFailed": "Échec du chargement des données du tournoi.",
+      "noMatches": "Aucun match trouvé dans le tournoi.",
+      "statusFailed": "Échec de l'obtention du statut du tournoi.",
+      "nextMatchFailed": "Impossible de lancer le match suivant.",
+      "noMatchId": "Données incorrectes du serveur.",
+      "noFutureRounds": "Aucun tour futur disponible."
     }
   },
   "tournament": {
     "title": "TOURNOI",
     "numberOfPlayers": "Nombre de joueurs",
-    "firstRound": "Ordre du premier tour"
+    "firstRound": "Ordre du premier tour",
+    "instructions": "Voici les affrontements du premier tour.",
+    "tryAgain": "Réessayer",
+    "nextMatch": "Le prochain match est prêt",
+    "nextRound": "Le prochain tour est prêt",
+    "round": "Tour {number}",
+    "ended": "Tournoi terminé ! Vainqueur : {name}",
+    "match": "Match {number}"
   },
   "scores": {
     "title": "MATCHS RÉCENTS",
     "loading": "Chargement des matchs...",
-    "empty": "Aucun match joué",
-    "error": {
-      "fetch": "Impossible de récupérer les matchs",
-      "unknown": "Une erreur inattendue s'est produite"
-    }
+    "empty": "Aucun match joué"
   }
 }
