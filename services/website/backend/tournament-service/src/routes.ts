@@ -123,7 +123,7 @@ export function registerRoutes(fastify: FastifyInstance, tournaments: Map<string
     console.log(`Creating new match for tournament ${tournamentId}, round ${currentRound}, match ${currentMatch}`, match);
 
     try {
-      const res = await fetch(path.join(GAME_SERVICE_URL, 'new-tournament-match'), {
+      const res = await fetch(`${GAME_SERVICE_URL}/new-tournament-match`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tournamentId, nick_left: match.left, nick_right: match.right }),

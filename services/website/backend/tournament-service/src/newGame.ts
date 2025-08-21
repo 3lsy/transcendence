@@ -7,7 +7,7 @@ export async function newGame(
   nick_right: string
 ) : Promise<string | null> {
   try {
-    const res = await fetch(path.join(GAME_SERVICE_URL, 'new'), {
+    const res = await fetch(`${GAME_SERVICE_URL}/new`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nick_left, nick_right }),
