@@ -5,7 +5,7 @@ const SCOREBOARD_SERVICE_URL = process.env.SCOREBOARD_SERVICE_URL || 'http://sco
 
 export async function saveScore(match_id: string, left_nick: string, left_score: number, right_nick: string, right_score: number) {
   try {
-    const res = await fetch(path.join(SCOREBOARD_SERVICE_URL, 'score'), {
+    const res = await fetch(`${SCOREBOARD_SERVICE_URL}/score`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ match_id, left_nick, left_score, right_nick, right_score }),

@@ -49,13 +49,18 @@ export class PongGame {
     this.ball.y += this.ball.vy;
 
     // Bounce on top/bottom walls
-    if (this.ball.y <= 0 || this.ball.y >= this.height - this.ballSize) {
+    if (this.ball.y <= 0) {
+      this.ball.y = 0;
+      this.ball.vy *= -1;
+    } else if (this.ball.y >= this.height - this.ballSize) {
+      this.ball.y = this.height - this.ballSize;
       this.ball.vy *= -1;
     }
 
     // Paddle collision & scoring left side
     if (this.ball.x <= 20 && this.players.left) {
       if (this.ball.y >= this.players.left.y && this.ball.y <= this.players.left.y + this.paddleHeight) {
+        this.ball.x = 20;
         this.ball.vx *= -1;
       } else {
         this.scores.right++;
@@ -68,6 +73,7 @@ export class PongGame {
     // Paddle collision & scoring right side
     else if (this.ball.x >= this.width - 20 && this.players.right) {
       if (this.ball.y >= this.players.right.y && this.ball.y <= this.players.right.y + this.paddleHeight) {
+        this.ball.x = this.width - 20 - this.ballSize;
         this.ball.vx *= -1;
       } else {
         this.scores.left++;
@@ -110,7 +116,7 @@ export class PongGame {
       if (this.tournamentId) {
         // fetch POST request to tournament service to save the match result
         try {
-          const res = await fetch(path.join(TOURNAMENT_SERVICE_URL, 'match-finished'), {
+          const res = await fetch(`${TOURNAMENT_SERVICE_URL}/match-finished`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -185,7 +191,7 @@ export class PongGame {
   }
 
   resetBall() {
-    const speed = 4;
+    const speed = 4.5;
     const angle = (Math.random() * Math.PI / 4) - (Math.PI / 8); // small random angle
     const direction = Math.random() > 0.5 ? 1 : -1;
 
