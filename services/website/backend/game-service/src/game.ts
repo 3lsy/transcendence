@@ -185,11 +185,15 @@ export class PongGame {
   }
 
   resetBall() {
+    const speed = 4;
+    const angle = (Math.random() * Math.PI / 4) - (Math.PI / 8); // small random angle
+    const direction = Math.random() > 0.5 ? 1 : -1;
+
     this.ball = {
       x: this.width / 2,
       y: this.height / 2,
-      vx: 4 * (Math.random() > 0.5 ? 1 : -1),
-      vy: 2,
+      vx: direction * speed * Math.cos(angle),
+      vy: speed * Math.sin(angle),
     };
   }
 
