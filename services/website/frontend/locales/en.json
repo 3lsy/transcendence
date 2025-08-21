@@ -74,7 +74,8 @@
       "noMatches": "No matches found in the tournament.",
       "statusFailed": "Failed to get tournament status.",
       "nextMatchFailed": "Could not start the next match.",
-      "noMatchId": "Wrong data from server."
+      "noMatchId": "Wrong data from server.",
+      "noFutureRounds": "No future rounds available."
     }
   },
   "tournament": {
