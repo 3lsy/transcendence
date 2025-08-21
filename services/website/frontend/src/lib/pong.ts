@@ -169,25 +169,46 @@ export class PongGame {
     const c = this.ctx;
     c.clearRect(0, 0, this.width, this.height);
 
-    // Midline
-    c.strokeStyle = 'rgba(255,255,255,0.25)';
-    c.setLineDash([6, 12]);
+    // navy background
+    c.fillStyle = '#1e293b';
+    c.fillRect(0, 0, this.width, this.height);
+
+    // LED line in the middle
+    c.save();
+    c.strokeStyle = "#b9d1fc";
+    c.shadowColor = "#6493e6";
+    c.shadowBlur = 8;
+    c.globalAlpha = 0.49;
+    c.setLineDash([8, 16]);
+    c.lineWidth = 2;
     c.beginPath();
     c.moveTo(this.width / 2, 0);
     c.lineTo(this.width / 2, this.height);
     c.stroke();
+    c.restore();
     c.setLineDash([]);
 
-    // Paddles
-    c.fillStyle = '#fff';
-    c.fillRect(8, this.leftY, this.paddleW, this.paddleH);
-    c.fillRect(this.width - (this.paddleW + 8), this.rightY, this.paddleW, this.paddleH);
+    // LED paddles
+    c.save();
+    c.shadowColor = "#cde5ff";
+    c.shadowBlur = 13;
+    c.globalAlpha = 0.96;
+    c.fillStyle = '#eaf6ff';
+    c.fillRect(16, this.leftY, this.paddleW, this.paddleH);
+    c.fillRect(this.width - this.paddleW - 16, this.rightY, this.paddleW, this.paddleH);
+    c.restore();
 
-    // Ball
+    // LED ball
+    c.save();
+    c.shadowColor = "#eaf6ff";
+    c.shadowBlur = 20;
+    c.globalAlpha = 0.95;
     c.beginPath();
     c.arc(this.ballX, this.ballY, this.ballR, 0, Math.PI * 2);
+    c.fillStyle = "#fff";
     c.fill();
-  }
+    c.restore();
+    }
 
   private gameOver(winner: string, points: number): void {
     this.stop();

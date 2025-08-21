@@ -2,15 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Large stacked, rounded, uppercase outline button (home & primary CTAs) */
 .btn-menu {
   @apply grid place-items-center rounded-xl border-2 border-slate-300 text-slate-200 uppercase tracking-[0.20em] hover:bg-white/5 transition;
-  @apply w-[320px] md:w-[380px] h-[90px] px-6 text-center;
+  @apply w-[220px] md:w-[260px] h-[60px] px-6 text-center;
+  @apply transform transition-transform duration-100 hover:scale-105;
 }
-.btn-menu-inner { @apply leading-tight text-2xl; }
 
-/* Smaller variant for dialogs/secondary placements (restart/home/back/clear) */
+.btn-menu-inner { @apply leading-tight text-lg; }
+
 .btn-menu-sm {
-  @apply w-[200px] md:w-[240px] h-[70px];
+  @apply w-[140px] md:w-[180px] h-[46px];
+  @apply grid place-items-center rounded-xl border-2 border-slate-300 text-slate-200 uppercase tracking-[0.20em] hover:bg-white/5 transition;
+  @apply transform transition-transform duration-100 hover:scale-105;
 }
-.btn-menu-sm .btn-menu-inner { @apply text-xl; }
+
+.btn-menu-sm .btn-menu-inner { @apply text-base; }
+
+.btn-menu-md { 
+  @apply w-[200px] md:w-[240px] h-[70px];
+  @apply grid place-items-center rounded-xl border-2 border-slate-300 text-slate-200 uppercase tracking-[0.20em] hover:bg-white/5 transition;
+  @apply transform transition-transform duration-100 hover:scale-105;
+}
+
+.btn-menu-md .btn-menu-inner { @apply text-xl; }
+
+.btn-menu-lg {
+  @apply w-[260px] md:w-[320px] h-[80px];
+  @apply grid place-items-center rounded-xl border-2 border-slate-300 text-slate-200 uppercase tracking-[0.20em] hover:bg-white/5 transition;
+  @apply transform transition-transform duration-100 hover:scale-105;
+}
+
+.btn-menu-lg .btn-menu-inner { @apply text-2xl; }
+
+.btn-menu-lg {
+  @apply w-[260px] md:w-[320px] h-[80px];
+  @apply grid place-items-center rounded-xl border-2 border-slate-300 text-slate-200 uppercase tracking-[0.20em] hover:bg-white/5 transition;
+  @apply transform transition-transform duration-100 hover:scale-105;
+}
+
+.btn-menu-lg .btn-menu-inner { @apply text-2xl; }
+
+html, body {
+  margin: 0;
+  padding:0;
+  box-sizing: border-box;
+  height: 100vh;
+  width: 100vw;
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow: hidden;
+}
+
