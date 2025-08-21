@@ -24,25 +24,25 @@ while true; do
                 echo "RIGHT UP"
                 curl -sk -X POST "$URL" \
                     -H "Content-Type: application/json" \
-                    -d "{\"matchId\": \"$MATCH_ID\", \"side\": \"right\", \"dy\": -5}"
+                    -d "{\"matchId\": \"$MATCH_ID\", \"side\": \"right\", \"dy\": -15}"
                 ;;
             "[B") # Down arrow
                 echo "RIGHT DOWN"
                 curl -sk -X POST "$URL" \
                     -H "Content-Type: application/json" \
-                    -d "{\"matchId\": \"$MATCH_ID\", \"side\": \"right\", \"dy\": 5}"
+                    -d "{\"matchId\": \"$MATCH_ID\", \"side\": \"right\", \"dy\": 15}"
                 ;;
         esac
     elif [[ $key == "w" ]]; then
         echo "LEFT UP"
         curl -sk -X POST "$URL" \
             -H "Content-Type: application/json" \
-            -d "{\"matchId\": \"$MATCH_ID\", \"side\": \"left\", \"dy\": -5}"
+            -d "{\"matchId\": \"$MATCH_ID\", \"side\": \"left\", \"dy\": -15}"
     elif [[ $key == "s" ]]; then
         echo "LEFT DOWN"
         curl -sk -X POST "$URL" \
             -H "Content-Type: application/json" \
-            -d "{\"matchId\": \"$MATCH_ID\", \"side\": \"left\", \"dy\": 5}"
+            -d "{\"matchId\": \"$MATCH_ID\", \"side\": \"left\", \"dy\": 15}"
     elif [[ $key == "q" ]]; then
         echo "Exiting..."
         break
