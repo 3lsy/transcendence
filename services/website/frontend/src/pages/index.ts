@@ -1,4 +1,4 @@
-import { getLang, setLang, t } from '../lib/i18n.js';
+import { Lang, getLang, setLang, t } from '../lib/i18n.js';
 
 const tag = 'page-home';
 
@@ -10,10 +10,12 @@ class HomePage extends HTMLElement {
     this.innerHTML = `
       <section class="relative">
         <!-- Language toggle (top-left) -->
-        <div class="absolute left-0 top-0">
-          <button id="lang" class="mt-2 rounded-full border border-slate-600/70 bg-black/40 px-3 py-1 text-xs tracking-widest hover:bg-slate-900/60">
-            🌐 ${lang.toUpperCase()}
-          </button>
+        <div style="position: absolute; top: 16px; left: 16px; z-index: 10;">
+          <select id="lang-select" class="btn-select" aria-label="Select Language">
+            <option value="en"${lang === "en" ? " selected" : ""}>English</option>
+            <option value="fr"${lang === "fr" ? " selected" : ""}>Français</option>
+            <option value="es"${lang === "es" ? " selected" : ""}>Español</option>
+          </select>
         </div>
 
         <header class="pt-8 pb-8">
@@ -47,9 +49,14 @@ class HomePage extends HTMLElement {
       </section>
     `;
 
-    this.querySelector<HTMLButtonElement>('#lang')?.addEventListener('click', async () => {
-      const next = lang.startsWith('en') ? 'fr' : 'en';
-      await setLang(next as any);
+    this.setupLanguageListener();
+  }
+  private setupLanguageListener() {
+    const select = this.querySelector<HTMLSelectElement>('#lang-select');
+    if (!select) return;
+    select.addEventListener('change', async (event) => {
+      const target = event.target as HTMLSelectElement;
+      await setLang(target.value as Lang);
       this.render();
     });
   }
