@@ -37,7 +37,6 @@ export class PongGame {
   readonly paddleHeight = 80;
   readonly ballSize = 10;
   readonly winningScore = 11;
-  private gameEnded = false;
   private finalResult: {
     winnerSide: PlayerSide;
     winnerAlias: string;
@@ -45,7 +44,7 @@ export class PongGame {
   } | null = null;
   private botStates: { left?: BotState; right?: BotState } = {};
 
-
+  gameEnded = false;
   matchId: string;
   tournamentId: string | null = null;
 
