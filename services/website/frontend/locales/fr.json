@@ -38,7 +38,8 @@
     "next": {
       "top": "SUIVANT",
       "bottom": "MATCH"
-    }
+    },
+    "join": "Rejoindre"
   },
   "common": {
     "remove": "Supprimer",
@@ -94,5 +95,9 @@
     "title": "MATCHS RÉCENTS",
     "loading": "Chargement des matchs...",
     "empty": "Aucun match joué"
+  },
+  "play": {
+    "active_matches": "Matchs en cours",
+    "no_active_matches": "Aucun match en cours"
   }
 }
