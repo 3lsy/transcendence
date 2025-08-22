@@ -1,5 +1,5 @@
 type Dict = Record<string, any>;
-type Lang = 'en' | 'fr' | (string & {});
+export type Lang = 'en' | 'fr' | 'es' |(string & {});
 const LANG_KEY = 'pong:lang';
 const DICT_KEY = (l: string) => `pong:i18n:${l}`;
 const DEFAULT_LANG: Lang = 'en';
