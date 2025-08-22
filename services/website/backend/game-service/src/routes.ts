@@ -150,4 +150,14 @@ export function registerRoutes(fastify: FastifyInstance, games: Map<string, Pong
 
     return { message: `Match ${matchId} has been ended.` };
   });
+
+  // List game, return {matchId, player_left, player_right}[]
+  fastify.get('/list', async (req, reply) => {
+    const gameList = Array.from(games.values()).filter(game=>!game.gameEnded && !game.tournamentId).map(game => ({
+      matchId: game.matchId,
+      player_left: game.players.left?.alias ?? null,
+      player_right: game.players.right?.alias ?? null,
+    }));
+    return gameList;
+  })
 }
