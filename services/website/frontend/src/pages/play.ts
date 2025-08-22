@@ -6,6 +6,16 @@ import { navigate } from '../router/router.js';
 const tag = 'page-play';
 
 class PlayPage extends HTMLElement {
+  private _matches: Array<{ matchId: string; player_left: string; player_right: string }> = [];
+  private loading = false;
+  private error: string | null = null;
+
+  connectedCallback(): void {
+    this.render();
+    this.fetchMatches();
+    this.setupFormHandler();
+  }
+
   async createGame(nickLeft: string, nickRight: string): Promise<{ matchId: string }> {
     const response = await fetch('/api/game/new', {
       method: 'POST',
@@ -23,32 +33,27 @@ class PlayPage extends HTMLElement {
     return response.json();
   }
 
-  connectedCallback(): void {
-    this.innerHTML = `
-    <section class="min-h-screen flex flex-col px-4 py-10">
-      <page-header></page-header>
+  private async fetchMatches() {
+    this.loading = true;
+    this.render();
+    try {
+      const response = await fetch('/api/game/list');
+      if (!response.ok) throw new Error('Failed to load matches');
+      this._matches = await response.json();
+      this.error = null;
+    } catch (err) {
+      this.error = err instanceof Error ? err.message : 'Unknown error';
+    } finally {
+      this.loading = false;
+      this.render();
+    }
+  }
 
-      <div class="flex-1 flex flex-col items-center justify-center">
-        <div id="error-message" class="text-red-500 text-sm mb-4 hidden"></div>
-        <form id="game-form" class="grid gap-8 md:grid-cols-2 w-full max-w-4xl">
-          ${this.playerCard('playerA-alias')}
-          ${this.playerCard('playerB-alias')}
-          <div class="md:col-span-2 mt-10 flex justify-end">
-            <button type="submit" class="btn-menu btn-menu-md border border-slate-500 hover:border-white transition">
-              <span class="btn-menu-inner">
-                <span class="block">${t('btn.start.top')}</span>
-                <span class="block">${t('btn.start.bottom')}</span>
-              </span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </section>
-  `;
+  private setupFormHandler() {
+    const form = this.querySelector<HTMLFormElement>('#game-form');
+    if (!form) return;
 
-    const form = this.querySelector<HTMLFormElement>('#game-form')!;
     const errorDiv = this.querySelector<HTMLDivElement>('#error-message')!;
-
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       errorDiv.classList.add('hidden');
@@ -77,6 +82,69 @@ class PlayPage extends HTMLElement {
         errorDiv.classList.remove('hidden');
       }
     });
+  }
+
+  private render(): void {
+    this.innerHTML = `
+    <section class="min-h-screen flex flex-col px-4 py-10 space-y-16">
+      <page-header></page-header>
+
+      <div class="flex flex-col items-center justify-center">
+        <div id="error-message" class="text-red-500 text-sm mb-4 hidden"></div>
+        <form id="game-form" class="grid gap-8 md:grid-cols-2 w-full max-w-4xl">
+          ${this.playerCard('playerA-alias')}
+          ${this.playerCard('playerB-alias')}
+          <div class="md:col-span-2 mt-10 flex justify-end">
+            <button type="submit" class="btn-menu btn-menu-md border border-slate-500 hover:border-white transition">
+              <span class="btn-menu-inner">
+                <span class="block">${t('btn.start.top')}</span>
+                <span class="block">${t('btn.start.bottom')}</span>
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="w-full max-w-3xl mx-auto">
+        <h2 class="text-xl text-white font-semibold mb-4">${t('play.active_matches') || 'Active Matches'}</h2>
+        <ol class="space-y-4">
+          ${this.renderMatches()}
+        </ol>
+      </div>
+    </section>
+  `;
+    this.setupFormHandler(); // Re-bind event listener on re-render
+  }
+
+  private renderMatches(): string {
+    if (this.loading) {
+      return `<li class="text-slate-400">${t('loading') || 'Loading matches...'}</li>`;
+    }
+
+    if (this.error) {
+      return `<li class="text-red-400">${this.error}</li>`;
+    }
+
+    if (!this._matches.length) {
+      return `<li class="text-slate-500">${t('play.no_active_matches') || 'No active matches'}</li>`;
+    }
+
+    return this._matches
+      .map(
+        (match) => `
+      <li class="rounded-lg border border-slate-600 bg-slate-800/30 backdrop-blur-md shadow-md p-5 text-white flex items-center justify-between">
+        <div class="text-lg font-medium">
+          ${match.player_left}
+          <span class="mx-2 opacity-50">vs</span>
+          ${match.player_right}
+        </div>
+        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition" onclick="window.location.href='/game?matchId=${match.matchId}'">
+          ${t('btn.join') || 'Join'}
+        </button>
+      </li>
+    `
+      )
+      .join('');
   }
 
   playerCard(aliasId: string) {
