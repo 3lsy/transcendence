@@ -16,6 +16,7 @@ RUN dnf -y install dnf-plugins-core jq \
     && dnf clean all
 
 COPY conf/kibana.yml /etc/kibana/kibana.yml
+COPY conf/dashboard.ndjson /usr/share/kibana/data/dashboard.ndjson
 
 RUN chown -R kibana:kibana /etc/kibana /usr/share/kibana /usr/bin/vault
 

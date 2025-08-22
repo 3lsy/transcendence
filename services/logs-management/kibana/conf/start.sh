@@ -71,6 +71,7 @@ if [ ! -f /usr/share/kibana/data/kibana.setup ]; then
 
   echo "Save kibana.yml configuration in volume."
   cp /etc/kibana/kibana.yml /usr/share/kibana/data/kibana.yml
+
 else
   echo "Kibana setup file already exists. Skipping setup."
   echo "Copying existing configuration..."
@@ -81,4 +82,39 @@ else
 fi
 
 # Start Kibana
-/usr/share/kibana/bin/kibana
+/usr/share/kibana/bin/kibana &
+
+# Get the Elastic password from Vault
+until ELASTIC_PASSWORD=$(vault kv get -field=elastic_password secret/elasticsearch); do
+  echo "Failed to retrieve Elastic password from Vault... waiting..."
+  sleep 2
+done
+
+## Import :
+# curl -k -u elastic:'y-0TF_tRykSwNw+*rn*E' -H 'kbn-xsrf: true' -X POST "https://localhost:5601/api/saved_objects/_import?overwrite=true" --form file=@dashboard.ndjson
+echo "Importing default dashboard..."
+
+until curl -k -u elastic:"$ELASTIC_PASSWORD" -H 'kbn-xsrf: true' -X POST "https://localhost:5601/api/saved_objects/_import?overwrite=true" --form file=@/usr/share/kibana/data/dashboard.ndjson; do
+  echo "Failed to import dashboard... waiting..."
+  sleep 2
+done
+
+# {"statusCode":415,"error":"Unsupported Media Type","message":"Unsupported Media Type"}
+# Retry until HTTP 200
+status_code=0
+while [[ "$status_code" -ne 200 ]]; do
+    echo "Trying to import dashboard..."
+    status_code=$(curl -k -u elastic:"$ELASTIC_PASSWORD" \
+        -H 'kbn-xsrf: true' \
+        -X POST "https://localhost:5601/api/saved_objects/_import?overwrite=true" \
+        --form file=@/usr/share/kibana/data/dashboard.ndjson \
+        -w "%{http_code}" -o /dev/null) || status_code=0
+    if [[ "$status_code" -ne 200 ]]; then
+        echo "Import failed (HTTP $status_code), retrying in 2 seconds..."
+        sleep 2
+    fi
+done
+echo "Default dashboard imported."
+
+# Keep the container running
+wait
