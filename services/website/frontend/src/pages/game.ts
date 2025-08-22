@@ -237,8 +237,8 @@ class GamePage extends HTMLElement {
 
       <!-- Game Area -->
       <div class="flex-1 flex items-center justify-center">
-        <div class="relative w-full max-w-5xl aspect-video overflow-hidden rounded-lg border border-slate-700 bg-black shadow-md">
-          <canvas id="c" class="block h-full w-full bg-black" width="800" height="400"></canvas>
+         <div class="relative flex items-center justify-center w-full h-full overflow-hidden rounded-lg border border-slate-700 bg-black shadow-md">
+          <canvas id="c" class="bg-black h-full w-full"></canvas>
         </div>
       </div>
 

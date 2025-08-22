@@ -27,7 +27,7 @@
 @layer components {
   .page-tournament h2, 
   .page-tournament-order h2 {
-    @apply text-lg sm:text-x1 md:text-4x1;
+    @apply text-lg;
   }
   .btn-menu {
     @apply text-lg;
