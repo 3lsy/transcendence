@@ -17,7 +17,7 @@ class TournamentPage extends HTMLElement {
 
   private render(): void {
     this.innerHTML = `
-      <section class="min-h-screen flex flex-col px-4 py-10">
+      <section class="page-tournament min-h-screen flex flex-col px-4 py-10">
         <page-header title="${t('tournament.title')}" back="/"></page-header>
 
         <div class="flex-1 flex flex-col items-center justify-center">
@@ -50,11 +50,8 @@ class TournamentPage extends HTMLElement {
 
             <!-- Full width: Start button -->
             <div class="md:col-span-2 flex justify-end mt-6">
-              <button id="start" type="button" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
-                <span class="btn-menu-inner">
-                  <span class="block">${t('btn.startTournament.top')}</span>
-                  <span class="block">${t('btn.startTournament.bottom')}</span>
-                </span>
+              <button type="submit" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
+                  <span class="btn-menu-inner">${t('btn.startTournament.top')}${t('btn.startTournament.bottom')}</span>
               </button>
             </div>
           </div>

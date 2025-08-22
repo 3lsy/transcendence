@@ -25,12 +25,16 @@
 }
 
 @layer components {
+  .page-tournament h2, 
+  .page-tournament-order h2 {
+    @apply text-lg sm:text-x1 md:text-4x1;
+  }
   .btn-menu {
     @apply text-lg;
     @apply w-full max-w-[600px];
   }
   .btn-back {
-    @apply flex items-center gap-2 rounded-lg border-2 border-slate-300 text-slate-200 uppercase px-4 tracking-[0.20em] h-[42px] transition hover:bg-white/10 hover:border-white font-normal font-michroma text-lg md:text-xl;
+    @apply flex items-center gap-2 rounded-lg border-2 border-slate-300 text-slate-200 uppercase px-4 tracking-[0.20em] h-[42px] transition hover:bg-white/10 hover:border-white font-normal text-lg md:text-xl;
   }
   .btn-menu-play {
     @apply w-[380px] h-[90px] text-2xl;

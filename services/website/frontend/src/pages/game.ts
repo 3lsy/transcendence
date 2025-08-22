@@ -221,10 +221,8 @@ class GamePage extends HTMLElement {
       
       <!-- Header -->
       <div class="mb-6 flex items-center justify-between">
-        <button id="quit" class="btn-back flex items-center gap-2 rounded-lg border-2 border-slate-300 text-slate-200 uppercase px-4 tracking-[0.20em] h-[42px] transition hover:bg-white/10 hover:border-white font-normal font-michroma text-lg md:text-xl">
-          <span class="btn-menu-inner">
-            <span class="block">${t('btn.quit.top')}</span>
-            <span class="block">${t('btn.quit.bottom')}</span>
+        <button id="quit" class="btn-back flex items-center gap-2 rounded-lg border-2 border-slate-300 text-slate-200 uppercase px-4 tracking-[0.20em] h-[42px] transition hover:bg-white/10 hover:border-white font-normal text-lg md:text-xl">
+          <span class="btn-menu-inner">${t('btn.quit.top')}</span>
           </span>
         </button>
         
