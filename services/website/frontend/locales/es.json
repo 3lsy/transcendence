@@ -1,31 +1,98 @@
 {
-  "home": { "title": "PONG" },
-  "btn": {
-    "play": { "top": "JUGAR", "bottom": "PARTIDA" },
-    "tournament": { "top": "TORNEO", "bottom": "" },
-    "scores": { "top": "PUNTUACIONES", "bottom": "ALTAS" },
-    "start": { "top": "INICIAR", "bottom": "PARTIDA" },
-    "startTournament": { "top": "INCIAR", "bottom": "TORNEO" },
-    "back": { "top": "VOLVER", "bottom": "MENÚ" },
-    "home": { "top": "INICIO", "bottom": "MENÚ" },
-    "quit": { "top": "SALIR", "bottom": "PARTIDA" },
-    "restart": { "top": "REINICIAR", "bottom": "PARTIDA" },
-    "clear": { "top": "BORRAR", "bottom": "PUNTUACIONES" }
+  "home": {
+    "title": "PONG"
   },
-  "common": { "remove": "Eliminar" },
+  "btn": {
+    "play": {
+      "top": "JUGAR",
+      "bottom": "PARTIDA"
+    },
+    "tournament": {
+      "top": "TORNEO",
+      "bottom": ""
+    },
+    "scores": {
+      "top": "RESULTADOS",
+      "bottom": ""
+    },
+    "start": {
+      "top": "INICIAR",
+      "bottom": "PARTIDA"
+    },
+    "startTournament": {
+      "top": "INICIAR",
+      "bottom": "TORNEO"
+    },
+    "back": {
+      "top": "VOLVER",
+      "bottom": "MENÚ"
+    },
+    "home": {
+      "top": "INICIO",
+      "bottom": "MENÚ"
+    },
+    "quit": {
+      "top": "SALIR",
+      "bottom": "PARTIDA"
+    },
+    "next": {
+      "top": "SIGUIENTE",
+      "bottom": "ENCUENTRO"
+    }
+  },
+  "common": {
+    "remove": "Eliminar",
+    "loading": "Cargando..."
+  },
   "game": {
     "title": "PARTIDA",
     "alias": "Alias",
-    "controls": "Controles: Izquierda = W/S, Derecha = ↑/↓ · El primero en {target} gana",
-    "win": "¡{name} gana!"
+    "controls": "Controles: Izquierda = W/S, Derecha = ↑/↓ · El primero en llegar a {target} gana",
+    "win": "¡{name} gana!",
+    "quit": "La partida fue abandonada.",
+    "loading": "Cargando...",
+    "unknownPlayer": "Desconocido"
+  },
+  "error": {
+    "game": {
+      "notFound": "Partida no encontrada.",
+      "generic": "Algo salió mal.",
+      "quitFailed": "Error al salir de la partida.",
+      "disconnected": "Conexión perdida. La partida terminó."
     },
+    "alias": {
+      "empty": "El apodo no puede estar vacío.",
+      "invalid": "El apodo debe tener entre 3 y 8 caracteres alfanuméricos."
+    },
+    "scores": {
+      "fetch": "Error al obtener los encuentros",
+      "unknown": "Ocurrió un error inesperado"
+    },
+    "tournament": {
+      "noId": "Falta el ID del torneo.",
+      "fetchFailed": "Error al obtener los datos del torneo.",
+      "noMatches": "No se encontraron encuentros en el torneo.",
+      "statusFailed": "No se pudo obtener el estado del torneo.",
+      "nextMatchFailed": "No se pudo iniciar el siguiente encuentro.",
+      "noMatchId": "Datos incorrectos del servidor."
+    }
+  },
   "tournament": {
     "title": "TORNEO",
-    "numberOfPlayers": "Número de Jugadores",
-    "firstRound": "Orden de la primera ronda"
+    "numberOfPlayers": "Número de jugadores",
+    "firstRound": "Orden de la primera ronda",
+    "instructions": "Aquí están los emparejamientos de la primera ronda.",
+    "tryAgain": "Intentar de nuevo",
+    "nextMatch": "El siguiente encuentro está listo",
+    "nextRound": "La siguiente ronda está lista",
+    "round": "Ronda {number}",
+    "ended": "¡Torneo terminado! Ganador: {name}",
+    "match": "Encuentro {number}",
+    "noFutureRounds": "No hay rondas futuras disponibles."
   },
   "scores": {
-    "title": "PUNTUACIONES ALTAS",
-    "empty": "No hay puntuaciones aún"
+    "title": "PARTIDAS RECIENTES",
+    "loading": "Cargando partidas...",
+    "empty": "Aún no se han jugado partidas"
   }
 }
