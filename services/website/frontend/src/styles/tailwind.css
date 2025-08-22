@@ -14,3 +14,12 @@
   @apply w-[200px] md:w-[240px] h-[70px];
 }
 .btn-menu-sm .btn-menu-inner { @apply text-xl; }
+
+/* language dropdown */
+.btn-select {
+  @apply rounded-lg border border-slate-500 bg-slate-800 text-slate-200 text-sm px-2 py-1 transition cursor-pointer;
+}
+.btn-select:hover,
+.btn-select:focus {
+  @apply bg-slate-700 border-slate-400 outline-none;
+}
