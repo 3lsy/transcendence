@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { PongGame } from './game';
+import { PADDLE_STEP, PongGame } from './game';
 
 // Description:
 // This module registers the WebSocket endpoint for the Pong game service.
@@ -8,9 +8,6 @@ import { PongGame } from './game';
 
 // Map of matchId -> connected clients
 const matchClients = new Map<string, Set<WebSocket>>();
-
-// Movement step size
-const PADDLE_STEP = 10;
 
 export function registerWebsocket(fastify: FastifyInstance, games: Map<string, PongGame>) {
   fastify.get('/:matchId', { websocket: true }, (ws, req) => {

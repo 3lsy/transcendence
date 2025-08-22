@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { saveScore } from "./saveScore";
 
 type PlayerSide = 'left' | 'right';
@@ -9,7 +8,28 @@ interface Player {
   y: number; // paddle Y position
 }
 
+type BotDifficulty = "easy" | "medium" | "hard";
+
+interface BotConfig {
+  aimError: number;
+}
+
+interface BotState {
+  targetY: number;
+  lastDecision: number;
+}
+
+const BOT_REACTION_INTERVAL = 1000; // ms between decisions (1s)
+
+const BOT_SETTINGS: Record<BotDifficulty, BotConfig> = {
+  easy: { aimError: 80 },
+  medium: { aimError: 40 },
+  hard: { aimError: 20 },
+};
+
 const TOURNAMENT_SERVICE_URL = process.env.TOURNAMENT_SERVICE_URL ?? "http://tournament-service:3603"
+
+export const PADDLE_STEP = 10;
 
 export class PongGame {
   readonly width = 800;
@@ -23,9 +43,11 @@ export class PongGame {
     winnerAlias: string;
     scores: { left: number; right: number };
   } | null = null;
+  private botStates: { left?: BotState; right?: BotState } = {};
+
 
   matchId: string;
-  tournamentId: string | null = null; 
+  tournamentId: string | null = null;
 
   ball = { x: this.width / 2, y: this.height / 2, vx: 4, vy: 2 };
   players: { left?: Player; right?: Player } = {};
@@ -83,8 +105,70 @@ export class PongGame {
       }
     }
 
+    for (const side of ["left", "right"] as PlayerSide[]) {
+      const player = this.players[side];
+      if (!player || !player.alias.startsWith("Bot")) continue;
+
+      const difficulty: BotDifficulty =
+        player.alias.startsWith("BotE") ? "easy" :
+          player.alias.startsWith("BotM") ? "medium" : "hard";
+
+      const settings = BOT_SETTINGS[difficulty];
+      const state = this.botStates[side] ?? { targetY: player.y + this.paddleHeight / 2, lastDecision: 0 };
+
+      const now = Date.now();
+
+      // Only refresh target once per second
+      if (now - state.lastDecision > BOT_REACTION_INTERVAL) {
+        this.botThink(side, settings);
+      }
+
+      // Move paddle gradually toward targetY
+      const paddleCenter = player.y + this.paddleHeight / 2;
+      if (Math.abs(state.targetY - paddleCenter) > settings.aimError) {
+        if (state.targetY < paddleCenter) this.movePaddle(side, -PADDLE_STEP, true);
+        else this.movePaddle(side, +PADDLE_STEP, true);
+      }
+    }
+
     return false; // Game still ongoing
   }
+
+  private botThink(side: PlayerSide, settings: BotConfig) {
+    const bot = this.players[side];
+    if (!bot) return;
+
+    const predictedY = this.predictBallY(side);
+
+    // Add imperfection (aim error)
+    const targetY = predictedY + (Math.random() * settings.aimError - settings.aimError / 2);
+
+    this.botStates[side] = {
+      targetY,
+      lastDecision: Date.now(),
+    };
+  }
+
+
+  private predictBallY(side: PlayerSide): number {
+    let { x, y, vx, vy } = { ...this.ball };
+    const targetX = side === "left" ? 20 : this.width - 20 - this.ballSize;
+
+    // Simulate until ball reaches paddle line
+    while ((vx < 0 && x > targetX) || (vx > 0 && x < targetX)) {
+      x += vx;
+      y += vy;
+
+      // Bounce off walls
+      if (y <= 0 || y >= this.height - this.ballSize) {
+        vy *= -1;
+        y = Math.max(0, Math.min(this.height - this.ballSize, y));
+      }
+    }
+    return y;
+  }
+
+
 
   private async checkWinner(side: PlayerSide): Promise<boolean> {
     console.log(`Checking winner for side: ${side}, score: ${this.scores[side]}`);
@@ -124,7 +208,7 @@ export class PongGame {
               matchId: this.matchId,
               winnerSide: side,
               winnerAlias
-              }),
+            }),
           });
 
           if (!res.ok) {
@@ -153,11 +237,11 @@ export class PongGame {
     this.players = {};
   }
 
-  movePaddle(side: PlayerSide, dy: number) {
+  movePaddle(side: PlayerSide, dy: number, isBotMove = false) {
     const player = this.players[side];
-    if (player) {
-      player.y = Math.max(0, Math.min(this.height - this.paddleHeight, player.y + dy));
-    }
+    if (!player) return;
+    if (player.alias.startsWith("Bot") && !isBotMove) return; // Prevent human from moving bot paddle
+    player.y = Math.max(0, Math.min(this.height - this.paddleHeight, player.y + dy));
   }
 
   addPlayer(alias: string): PlayerSide | null {
