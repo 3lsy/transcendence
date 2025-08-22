@@ -51,6 +51,13 @@ else
   exit 1
 fi
 
+# Ensure audit device exists
+export VAULT_TOKEN="$ROOT_TOKEN"
+if ! vault audit list | grep -q "file/"; then
+  vault audit enable file file_path=/vault/data/audit.log
+  echo "Vault audit logging enabled at /vault/data/audit.log"
+fi
+
 if [ "$FIRST_TIME_SETUP" = true ]; then
   echo "First time setup for Vault..."
 
@@ -100,4 +107,5 @@ else
   echo "Vault already initialized and unsealed. Skipping first time setup."
 fi
 
+filebeat -e -c /etc/filebeat/filebeat.yml &
 wait

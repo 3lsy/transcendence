@@ -6,12 +6,20 @@ RUN dnf -y update \
     && dnf -y install vault \
     && dnf clean all
 
-RUN mkdir -p /vault/policies
+# Add GPG key for Filebeat
+COPY conf/elastic.repo /etc/yum.repos.d/elastic.repo
+COPY conf/filebeat.yml /etc/filebeat/filebeat.yml
+# --- Install Filebeat ---
+RUN rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch \
+    && dnf -y install --enablerepo=elastic filebeat \
+    && dnf clean all
+
+RUN mkdir -p /vault/policies /var/lib/filebeat
 
 COPY conf/grafana-policy.hcl /vault/policies/grafana-policy.hcl
 COPY conf/elastic-policy.hcl /vault/policies/elastic-policy.hcl
 
-RUN chown -R vault:vault /vault/ /usr/bin/vault
+RUN chown -R vault:vault /vault/ /usr/bin/vault /etc/filebeat /var/lib/filebeat
 
 COPY conf/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
