@@ -38,7 +38,8 @@
     "next": {
       "top": "SIGUIENTE",
       "bottom": "ENCUENTRO"
-    }
+    },
+    "join": "Unirse"
   },
   "common": {
     "remove": "Eliminar",
@@ -94,5 +95,9 @@
     "title": "PARTIDAS RECIENTES",
     "loading": "Cargando partidas...",
     "empty": "Aún no se han jugado partidas"
+  },
+  "play": {
+    "active_matches": "Partidas activas",
+    "no_active_matches": "No hay partidas activas"
   }
 }
