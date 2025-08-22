@@ -38,7 +38,8 @@
     "next": {
       "top": "Next",
       "bottom": "Match"
-    }
+    },
+    "join": "Join"
   },
   "common": {
     "remove": "Remove",
@@ -94,5 +95,9 @@
     "title": "RECENT MATCHES",
     "loading": "Loading matches...",
     "empty": "No matches played yet"
+  },
+  "play": {
+    "active_matches": "Active Matches",
+    "no_active_matches": "No active matches"
   }
 }
