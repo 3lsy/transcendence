@@ -51,9 +51,128 @@ class GamePage extends HTMLElement {
         rs.textContent = String(r);
       },
       onGameOver: async (winner, cause) => {
-        overlay.classList.remove('hidden');
-        if (cause === 'normal' && winner) {
-          msg.textContent = t('game.win', { name: winner });
+        if (cause === 'normal') {
+          msg.textContent = t('game.win', { name: winner ?? t('game.unknownPlayer') });
+          // Check tournament status if part of tournament
+          if (tournamentId) {
+            const msgTournament = document.createElement('p');
+            try {
+              const actionsDiv = this.querySelector('#tournament-actions')!;
+              actionsDiv.innerHTML = '';
+              await delay(300); // Wait a bit before checking
+              const response = await fetch(`/api/tournament/status/${tournamentId}`);
+              if (!response.ok) throw new Error();
+
+              const data = await response.json();
+              if (data.ended) {
+                // Tournament is finished
+                msgTournament.textContent = t('tournament.finished');
+                actionsDiv.innerHTML = `
+                  <a href="/" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
+                    <span class="btn-menu-inner">
+                      <span class="block">${t('btn.home.top')}</span>
+                      <span class="block">${t('btn.home.bottom')}</span>
+                    </span>
+                  </a>
+              `;
+              } else {
+                const button = document.createElement('button');
+                button.className = 'btn-menu btn-menu-sm border border-slate-500 hover:border-white transition';
+                button.innerHTML = `
+                  <span class="btn-menu-inner">
+                    <span class="block">${t('btn.next.top')}</span>
+                    <span class="block">${t('btn.next.bottom')}</span>
+                  </span>
+                `;
+
+                button.addEventListener('click', async () => {
+                  try {
+                    const res = await fetch('/api/tournament/new-match', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ tournamentId })
+                    });
+                    const result = await res.json();
+                    if (!res.ok || !result.matchId) throw new Error();
+
+                    navigate(`/game?matchId=${result.matchId}&tournamentId=${tournamentId}`);
+                  } catch {
+                    msgTournament.textContent = t('error.tournament.nextMatchFailed');
+                  }
+                });
+
+
+                const matchesLeft = data.matchesLeft;
+                const currentRoundIndex = data.currentRound;
+                const rounds: { left: string, right: string }[][] = data.rounds;
+
+                const listWrapper = document.createElement('div');
+                listWrapper.className = 'mt-6';
+
+                if (matchesLeft > 0) {
+                  // Remaining matches in current round
+                  const currentRoundMatches = rounds[currentRoundIndex];
+                  const remainingMatches = currentRoundMatches.slice(currentRoundMatches.length - matchesLeft);
+
+                  listWrapper.innerHTML = `
+                    <div class="mb-4 text-lg font-pong tracking-wide text-slate-300">
+                      ${t('tournament.round', { number: currentRoundIndex + 1 })}
+                    </div>
+                    <ol class="space-y-2 rounded-lg border border-slate-700 bg-slate-800/20 p-4 text-sm">
+                      ${remainingMatches
+                        .map(
+                          (m, idx) =>
+                            `<li class="rounded-md border border-slate-700 px-3 py-2">
+                              <span class="font-semibold">${t('tournament.match', { number: currentRoundMatches.length - matchesLeft + idx + 1 })}:</span> 
+                              ${m.left} VS ${m.right}
+                            </li>`
+                        )
+                        .join('')}
+                    </ol>
+                  `;
+                } else {
+                  // Show next round matches if any
+                  const nextRoundIndex = currentRoundIndex + 1;
+                  if (rounds[nextRoundIndex] && rounds[nextRoundIndex].length > 0) {
+                    listWrapper.innerHTML = `
+                      <div class="mb-4 text-lg font-pong tracking-wide text-slate-300">
+                        ${t('tournament.round', { number: nextRoundIndex + 1 })}
+                      </div>
+                      <ol class="space-y-2 rounded-lg border border-slate-700 bg-slate-800/20 p-4 text-sm">
+                        ${rounds[nextRoundIndex]
+                          .map(
+                            (m, idx) =>
+                              `<li class="rounded-md border border-slate-700 px-3 py-2">
+                                <span class="font-semibold">${t('tournament.match', { number: idx + 1 })}:</span> 
+                                ${m.left} VS ${m.right}
+                              </li>`
+                          )
+                          .join('')}
+                      </ol>
+                    `;
+                  } else {
+                    listWrapper.innerHTML = `
+                      <div class="rounded-lg border border-slate-700 bg-slate-800/20 p-4 text-sm text-slate-400 italic text-center">
+                        ${t('tournament.noFutureRounds')}
+                      </div>
+                    `;
+                  }
+                }
+
+                actionsDiv.appendChild(listWrapper);
+
+                if (data.matchesLeft === 0 && data.roundsLeft > 0) {
+                  msgTournament.textContent = t('tournament.nextRound');
+                } else {
+                  msgTournament.textContent = t('tournament.nextMatch');
+                }
+                actionsDiv.appendChild(button);
+              }
+            } catch {
+              msgTournament.textContent = t('error.tournament.statusFailed');
+            }
+            msg.appendChild(msgTournament);
+          }
         } else if (cause === 'quit') {
           msg.textContent = t('game.quit');
         } else if (cause === 'disconnected') {
@@ -61,125 +180,7 @@ class GamePage extends HTMLElement {
         } else {
           msg.textContent = t('error.game.generic');
         }
-        // Check tournament status if part of tournament
-        if (tournamentId && cause === 'normal') {
-          try {
-            await delay(300); // Wait a bit before checking
-            const response = await fetch(`/api/tournament/status/${tournamentId}`);
-            if (!response.ok) throw new Error();
-
-            const data = await response.json();
-            const actionsDiv = this.querySelector('#tournament-actions')!;
-            actionsDiv.innerHTML = ''; // Clear previous content
-
-            if (data.ended) {
-              // Tournament is finished
-              msg.textContent = t('tournament.ended', { name: winner ?? t('game.unknownPlayer') });
-              actionsDiv.innerHTML = `
-                <a href="/" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
-                  <span class="btn-menu-inner">
-                    <span class="block">${t('btn.home.top')}</span>
-                    <span class="block">${t('btn.home.bottom')}</span>
-                  </span>
-                </a>
-             `;
-            } else {
-              const button = document.createElement('button');
-              button.className = 'btn-menu btn-menu-sm border border-slate-500 hover:border-white transition';
-              button.innerHTML = `
-                <span class="btn-menu-inner">
-                  <span class="block">${t('btn.next.top')}</span>
-                  <span class="block">${t('btn.next.bottom')}</span>
-                </span>
-              `;
-
-              button.addEventListener('click', async () => {
-                try {
-                  const res = await fetch('/api/tournament/new-match', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ tournamentId })
-                  });
-                  const result = await res.json();
-                  if (!res.ok || !result.matchId) throw new Error();
-
-                  navigate(`/game?matchId=${result.matchId}&tournamentId=${tournamentId}`);
-                } catch {
-                  msg.textContent = t('error.tournament.nextMatchFailed');
-                }
-              });
-
-
-              const matchesLeft = data.matchesLeft;
-              const currentRoundIndex = data.currentRound;
-              const rounds: { left: string, right: string }[][] = data.rounds;
-
-              const listWrapper = document.createElement('div');
-              listWrapper.className = 'mt-6';
-
-              if (matchesLeft > 0) {
-                // Remaining matches in current round
-                const currentRoundMatches = rounds[currentRoundIndex];
-                const remainingMatches = currentRoundMatches.slice(currentRoundMatches.length - matchesLeft);
-
-                listWrapper.innerHTML = `
-                  <div class="mb-4 text-lg font-pong tracking-wide text-slate-300">
-                    ${t('tournament.round', { number: currentRoundIndex + 1 })}
-                  </div>
-                  <ol class="space-y-2 rounded-lg border border-slate-700 bg-slate-800/20 p-4 text-sm">
-                    ${remainingMatches
-                    .map(
-                      (m, idx) =>
-                        `<li class="rounded-md border border-slate-700 px-3 py-2">
-                            <span class="font-semibold">${t('tournament.match', { number: currentRoundMatches.length - matchesLeft + idx + 1 })}:</span> 
-                            ${m.left} VS ${m.right}
-                          </li>`
-                    )
-                    .join('')}
-                  </ol>
-                `;
-              } else {
-                // Show next round matches if any
-                const nextRoundIndex = currentRoundIndex + 1;
-                if (rounds[nextRoundIndex] && rounds[nextRoundIndex].length > 0) {
-                  listWrapper.innerHTML = `
-                    <div class="mb-4 text-lg font-pong tracking-wide text-slate-300">
-                      ${t('tournament.round', { number: nextRoundIndex + 1 })}
-                    </div>
-                    <ol class="space-y-2 rounded-lg border border-slate-700 bg-slate-800/20 p-4 text-sm">
-                      ${rounds[nextRoundIndex]
-                      .map(
-                        (m, idx) =>
-                          `<li class="rounded-md border border-slate-700 px-3 py-2">
-                              <span class="font-semibold">${t('tournament.match', { number: idx + 1 })}:</span> 
-                              ${m.left} VS ${m.right}
-                            </li>`
-                      )
-                      .join('')}
-                    </ol>
-                  `;
-                } else {
-                  listWrapper.innerHTML = `
-                    <div class="rounded-lg border border-slate-700 bg-slate-800/20 p-4 text-sm text-slate-400 italic text-center">
-                      ${t('tournament.noFutureRounds')}
-                    </div>
-                  `;
-                }
-              }
-
-              actionsDiv.appendChild(listWrapper);
-
-              if (data.matchesLeft === 0 && data.roundsLeft > 0) {
-                msg.textContent = t('tournament.nextRound');
-              } else {
-                msg.textContent = t('tournament.nextMatch');
-              }
-              actionsDiv.appendChild(button);
-            }
-          } catch {
-            msg.textContent = t('error.tournament.statusFailed');
-          }
-        }
+        overlay.classList.remove('hidden');
       },
     });
 

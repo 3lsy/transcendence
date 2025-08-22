@@ -86,7 +86,7 @@
     "nextMatch": "Next match is ready",
     "nextRound": "Next round is ready",
     "round": "Round {number}",
-    "ended": "Tournament end! Winer: {name}",
+    "ended": "Tournament end!",
     "match": "Match {number}",
     "noFutureRounds": "No future rounds available."
   },
