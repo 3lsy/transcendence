@@ -33,11 +33,10 @@ class PlayPage extends HTMLElement {
         <form id="game-form" class="grid gap-8 md:grid-cols-2 w-full max-w-4xl">
           ${this.playerCard('playerA-alias')}
           ${this.playerCard('playerB-alias')}
-          <div class="md:col-span-2 mt-10 flex justify-end">
-            <button type="submit" class="btn-menu btn-menu-md border border-slate-500 hover:border-white transition">
+          <div class="md:col-span-2 mt-10 flex justify-center">
+            <button type="submit" class="btn-menu btn-menu-sm border border-slate-500 hover:border-white transition">
               <span class="btn-menu-inner">
-                <span class="block">${t('btn.start.top')}</span>
-                <span class="block">${t('btn.start.bottom')}</span>
+                ${t('btn.start.top')} ${t('btn.start.bottom')}
               </span>
             </button>
           </div>

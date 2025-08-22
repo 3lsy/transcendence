@@ -137,7 +137,7 @@ class TournamentOrderPage extends HTMLElement {
 
   private renderError(message: string): void {
     this.innerHTML = `
-      <section class="min-h-screen flex flex-col px-4 py-10">
+      <section class="page-tournamnet-order min-h-screen flex flex-col px-4 py-10">
         <page-header title="${t('tournament.title')}" back="/tournament"></page-header>
 
         <div class="flex-1 flex flex-col items-center justify-center text-center space-y-4">

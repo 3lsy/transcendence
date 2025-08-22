@@ -83,6 +83,8 @@ export class PongGame {
   private raf = 0;
   private running = false;
 
+  private activeTouches: Record<number, { side: 'left' | 'right'; lastY: number }> = {};
+
   // Scores
   private leftScore = 0;
   private rightScore = 0;
@@ -90,6 +92,48 @@ export class PongGame {
   // Event handlers (bound for add/remove)
   private onKeyDown = (e: KeyboardEvent) => this.keys.add(e.key);
   private onKeyUp = (e: KeyboardEvent) => this.keys.delete(e.key);
+
+  private onTouchStart = (e: TouchEvent) => {
+    e.preventDefault();
+    for (const t of Array.from(e.changedTouches)) {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = t.clientX - rect.left;
+      const y = t.clientY - rect.top;
+      const side = x < rect.width / 2 ? 'left' : 'right';
+
+      this.activeTouches[t.identifier] = { side, lastY: y };
+    }
+  };
+
+  private onTouchMove = (e: TouchEvent) => {
+    e.preventDefault();
+    for (const t of Array.from(e.changedTouches)) {
+      const touch = this.activeTouches[t.identifier];
+      if (!touch) continue;
+
+      const rect = this.canvas.getBoundingClientRect();
+      const y = t.clientY - rect.top;
+
+      const deltaY = y - touch.lastY;
+      let direction: 'up' | 'down' | null = null;
+      if (Math.abs(deltaY) > 2) {
+        direction = deltaY < 0 ? 'up' : 'down';
+      }
+
+      if (direction) {
+        this.ws.send(JSON.stringify({ type: 'move', side: touch.side, direction }));
+      }
+
+      touch.lastY = y;
+    }
+  };
+
+  private onTouchEnd = (e: TouchEvent) => {
+    e.preventDefault();
+    for (const t of Array.from(e.changedTouches)) {
+      delete this.activeTouches[t.identifier];
+    }
+  };
 
   // Game loop (arrow keeps "this")
   private tick = () => {
@@ -157,6 +201,12 @@ export class PongGame {
 
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
+
+    // Touch events
+    this.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
+    this.canvas.addEventListener('touchmove', this.onTouchMove, { passive: false });
+    this.canvas.addEventListener('touchend', this.onTouchEnd, { passive: false });
+    this.canvas.addEventListener('touchcancel', this.onTouchEnd, { passive: false });
   }
 
   start(): void {
@@ -175,6 +225,12 @@ export class PongGame {
     this.ws.close();
     window.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('keyup', this.onKeyUp);
+
+    // Touch events
+    this.canvas.removeEventListener('touchstart', this.onTouchStart);
+    this.canvas.removeEventListener('touchmove', this.onTouchMove);
+    this.canvas.removeEventListener('touchend', this.onTouchEnd);
+    this.canvas.removeEventListener('touchcancel', this.onTouchEnd);
   }
 
   private draw(): void {

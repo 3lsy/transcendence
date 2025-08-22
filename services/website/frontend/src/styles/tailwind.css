@@ -14,3 +14,34 @@
   @apply w-[200px] md:w-[240px] h-[70px];
 }
 .btn-menu-sm .btn-menu-inner { @apply text-xl; }
+
+/* language dropdown */
+.btn-select {
+  @apply rounded-lg border border-slate-500 bg-slate-800 text-slate-200 text-sm px-2 py-1 transition cursor-pointer;
+}
+.btn-select:hover,
+.btn-select:focus {
+  @apply bg-slate-700 border-slate-400 outline-none;
+}
+
+@layer components {
+  .page-tournament h2, 
+  .page-tournament-order h2 {
+    @apply text-lg;
+  }
+  .btn-menu {
+    @apply text-lg;
+    @apply w-full max-w-[600px];
+  }
+  .btn-back {
+    @apply flex items-center gap-2 rounded-lg border-2 border-slate-300 text-slate-200 uppercase px-4 tracking-[0.20em] h-[42px] transition hover:bg-white/10 hover:border-white font-normal text-lg md:text-xl;
+  }
+  .btn-menu-play {
+    @apply w-[380px] h-[90px] text-2xl;
+  }
+  @screen md {
+    .btn-menu {
+      @apply w-[320px] md:w-[380px] h-[90px] text-xl;
+    }
+  }
+}
