@@ -9,7 +9,7 @@ RUN npm ci
 
 # Copy source code and build
 COPY . .
-RUN npm run build && mkdir -p /app/build && cp -r dist index.html locales build
+RUN npm run build && mkdir -p /app/build && cp -r dist index.html locales favicon.ico build
 
 FROM nginx:1.29
 
