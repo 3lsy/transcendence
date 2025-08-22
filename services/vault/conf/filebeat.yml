@@ -1,0 +1,31 @@
+filebeat.inputs:
+  - type: filestream
+    id: vault-audit
+    enabled: true
+    paths:
+      - /vault/data/audit.log
+    prospector.scanner.fingerprint.length: 64
+    prospector.scanner.fingerprint.offset: 0
+    ignore_older: 0s       # Always check for updates
+    fields:
+      service: vault
+      log_type: audit
+
+# Disable Filebeat modules
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  enabled: false
+
+# Send logs to Logstash
+output.logstash:
+  hosts: ["logstash:5044"]
+  ssl:
+    enabled: true
+    verification_mode: none
+    verify: false
+
+# Flatten field structure
+fields_under_root: true
+
+# Optional for debugging
+logging.level: info
