@@ -1,7 +1,7 @@
 import { fetch } from 'undici';
 import path from 'node:path';
 
-const SCOREBOARD_SERVICE_URL = process.env.SCOREBOARD_SERVICE_URL || 'http://scoreboard-service:3602/';
+const SCOREBOARD_SERVICE_URL = process.env.SCOREBOARD_SERVICE_URL || 'http://scoreboard-service:3602';
 
 export async function saveScore(match_id: string, left_nick: string, left_score: number, right_nick: string, right_score: number) {
   try {
