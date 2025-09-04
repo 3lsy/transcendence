@@ -1,4 +1,25 @@
 # Transcendence
+<span>
+  <img alt="Static Badge" src="https://img.shields.io/badge/Project-shield?style=for-the-badge&logo=42&logoColor=%23fff&color=%23000">
+
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-shield?style=for-the-badge&logo=Docker&logoColor=%23fff&color=%23000">
+  <img alt="Vagrant" src="https://img.shields.io/badge/Vagrant-shield?style=for-the-badge&logo=Vagrant&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Rocky_Linux-shield?style=for-the-badge&logo=Rocky%20Linux&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Bash-shield?style=for-the-badge&logo=GNU%20Bash&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Elastic-shield?style=for-the-badge&logo=Elastic&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Logstash-shield?style=for-the-badge&logo=Logstash&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Kibana-shield?style=for-the-badge&logo=Kibana&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Grafana-shield?style=for-the-badge&logo=Grafana&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Prometheus-shield?style=for-the-badge&logo=Prometheus&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Vault-shield?style=for-the-badge&logo=Vault&logoColor=%23fff&color=%23000">
+  
+  <img alt="Static Badge" src="https://img.shields.io/badge/Typescript-shield?style=for-the-badge&logo=Typescript&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Prometheus-shield?style=for-the-badge&logo=Prometheus&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/TailwindCSS-shield?style=for-the-badge&logo=Tailwind%20CSS&logoColor=%23fff&color=%23000">
+  <img alt="Static Badge" src="https://img.shields.io/badge/SQLite-shield?style=for-the-badge&logo=sqlite&logoColor=%23fff&color=%23000">
+
+  
+</span>
 
 ## Infrastructure Architecture Diagram
 
