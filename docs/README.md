@@ -18,10 +18,9 @@
   <img alt="Static Badge" src="https://img.shields.io/badge/TailwindCSS-shield?style=for-the-badge&logo=Tailwind%20CSS&logoColor=%23fff&color=%23000">
   <img alt="Static Badge" src="https://img.shields.io/badge/SQLite-shield?style=for-the-badge&logo=sqlite&logoColor=%23fff&color=%23000">
 
-  
 </span>
 
-## Infrastructure Architecture Diagram
+## Infrastructure Architecture
 
 ![Architecture-Diagram](Architecture-Diagram.png)
 
