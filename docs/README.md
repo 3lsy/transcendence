@@ -20,15 +20,33 @@
 
 </span>
 
+## 📑 Table of Contents  
+
+1. [Infrastructure Architecture](#infrastructure-architecture)  
+2. [Project Structure](#project-structure)  
+3. [Build & Deployment](#build--deployment)  
+4. [Modules](#modules)  
+   - [DevOps](#devops)
+     - [Monitoring – Prometheus & Grafana](#monitoring--prometheus--grafana)  
+     - [ELK Stack](#elk-stack)  
+     - [Microservices](#microservices)  
+   - [Cybersecurity](#cybersecurity)  
+     - [WAF – ModSecurity](#waf--modsecurity)  
+     - [Secrets Management – Hashicorp Vault](#secrets-management--vault)  
+   - [Game Logic](#game-logic)  
+     - [Server-Side Pong & API](#server-side-pong--api)  
+   - [Web Development](#web-development) 
+5. [Bonus Modules](#bonus-modules) 
+
 ## Infrastructure Architecture
 
 ![Architecture-Diagram](Architecture-Diagram.png)
 
-## Project Structure Diagram
+## Project Structure
 
 ![Project Structure](Project.png)
 
-## Build
+## 🚀 Build & Deployment
 
 ```bash
 ./setup_certs.sh
@@ -36,41 +54,38 @@
 docker compose up -d
 ```
 
-## Chosen Modules
+## Modules
 
-### Web
+> This project is structured into several modules, each focusing on different aspects:
 
-- **Backend framework** – Use a framework to build the backend (Major)  
-  - [Fastify](https://fastify.dev/)
-- **Frontend framework/toolkit** – Use a framework or toolkit to build the front-end (Minor)  
-  - [Tailwind CSS](https://tailwindcss.com/)
-- **Database** – Use a database for the backend and more (Minor)  
-  - [SQLite](https://www.sqlite.org/)
+## DevOps
 
-### Cybersecurity
-
-- **WAF & Vault** – Implement WAF/ModSecurity with Hardened Configuration and HashiCorp Vault for Secrets Management (Major)  
-  - [ModSecurity](https://modsecurity.org/)  
-  - [HashiCorp Vault](https://www.vaultproject.io/)
-
-### DevOps
-
-- **ELK Stack** – Infrastructure setup with ELK for log management (Major)  
+### ELK Stack – Infrastructure setup with ELK for log management (Major)  
   - [Elasticsearch](https://www.elastic.co/elasticsearch/)  
   - [Logstash](https://www.elastic.co/logstash/)  
   - [Kibana](https://www.elastic.co/kibana/)
-- **Monitoring system** – Add a system to monitor infrastructure and services (Minor)  
+### Monitoring system – Add a system to monitor infrastructure and services (Minor)  
   - [Prometheus](https://prometheus.io/)  
   - [Grafana](https://grafana.com/)
-- **Microservices** – Design the backend as microservices (Major)
+### Microservices – Design the backend as microservices (Major)
 
-### Server-Side Pong
+## Cybersecurity
 
-- **Server-side Pong & API** – Replace basic Pong with server-side Pong and implement an API (Major)
+### WAF & Vault – Implement WAF/ModSecurity with Hardened Configuration and HashiCorp Vault for Secrets Management (Major)  
+  - [ModSecurity](https://modsecurity.org/)  
+  - [HashiCorp Vault](https://www.vaultproject.io/)
 
-### Accessibility
+## Server-Side Pong & API
 
-- **Multilanguage support** – Support multiple languages (Minor)
+### Server-side Pong & API – Replace basic Pong with server-side Pong and implement an API (Major)
+
+## Web Development  
+
+The website is composed by:  
+
+- **Backend:** [Fastify](https://fastify.dev/) with Node.js  
+- **Frontend:** [Tailwind CSS](https://tailwindcss.com/) for styling  
+- **Database:** [SQLite](https://www.sqlite.org/) as a lightweight storage solution  
 
 ---
 
