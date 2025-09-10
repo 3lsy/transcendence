@@ -28,7 +28,8 @@
 4. [Modules](#modules)  
    - [DevOps](#devops)
      - [Monitoring – Prometheus & Grafana](#prometheus-grafana)  
-     - [ELK Stack](#elk-stack)  
+       - [Grafana Dashboards](#grafana-dashboards)
+     - [ELK Stack – Log Management](#elk-stack)  
      - [Microservices](#microservices)  
    - [Cybersecurity](#cybersecurity)  
      - [WAF – ModSecurity](#waf-modsecurity)  
@@ -58,7 +59,7 @@ docker compose up -d
 
 > This project is structured into several modules, each focusing on different aspects:
 
-## DevOps
+## ⚙️ DevOps
 
 <a id="prometheus-grafana"></a>
 ### Prometheus & Grafana – Monitoring system for infrastructure and services
@@ -76,15 +77,16 @@ docker compose up -d
 - `ServiceDown` → failing health probes.
 - `HighContainerCPU` (>85%).
 
-![Prometheus-Alerts-Page](services-screenshots/prometheus/Prometheus-Alerts-Page-Complete.png)
+![Prometheus-Alerts-Page-Complete](services-screenshots/prometheus/Prometheus-Alerts-Page-Complete.png)
 
+<a id="grafana-dashboards"></a>
 **Grafana dashboards :**
-- **Infrastructure Dashboard**  : container resource usage, uptime, node metrics.
-- **Service Metrics Dashboard** : latency, error rates, throughput for microservices (via Fastify metrics), HTTP success/failure ratios, and exporter data.
+- **Infrastructure Dashboard :** container resource usage, uptime, node metrics.
+- **Service Metrics Dashboard :** latency, error rates, throughput for microservices (via Fastify metrics), HTTP success/failure ratios, and exporter data.
 
 📈 **Infrastructure Dashboard :**
 
-![Grafana-Infrastructure-Dashboard](services-screenshots/grafana/Grafana-Infrastructure-Dashboard.png)
+![Grafana-Infrastructure-Dashboard-Complete](services-screenshots/grafana/Grafana-Infrastructure-Dashboard-Complete.png)
 
 📊 **Service Metrics Dashboard :**
 
@@ -93,23 +95,39 @@ docker compose up -d
 <a id="elk-stack"></a>
 ### ELK Stack – Log Management Infrastructure
 
-**Log collection** is handled by [Filebeat](https://www.elastic.co/docs/reference/beats/filebeat/) from multiple services such as:
+**Log collection** is handled by [Filebeat](https://www.elastic.co/docs/reference/beats/filebeat/) from multiple services such as :
   - Apache reverse proxy (access/error logs).
   - WAF (ModSecurity logs).
   - Vault audit logs.
 
-This are the logs collected with filebeat, processed through [Logstash](https://www.elastic.co/logstash/), indexed in [Elasticsearch](https://www.elastic.co/elasticsearch/) and visualized in [Kibana](https://www.elastic.co/kibana/):
+This are the logs collected with filebeat, processed through [Logstash](https://www.elastic.co/logstash/), indexed in [Elasticsearch](https://www.elastic.co/elasticsearch/) and visualized in [Kibana](https://www.elastic.co/kibana/) :
 
 ![ELK-Logs-in-Kibana](services-screenshots/elastic/ELK-Logs-in-Kibana.png)
 
-This is a dashboard in Kibana from the collected logs:
+This is a dashboard in Kibana from the collected logs :
 
 ![ELK-Kibana-Dashboards](services-screenshots/elastic/ELK-Kibana-Dashboards.png)
 
 <a id="microservices"></a>
-### Microservices – Design the Backend as microservices
+### Backend as Microservices (Architecture)
 
-## Cybersecurity
+**Microservices implemented :**
+- `game-service` (port 3601).
+- `scoreboard-service` (port 3602, with persistent volume for data).
+- `tournament-service` (port 3603).
+
+**Design :**
+- Each runs as its own container, isolated and restart-managed.
+- RESTful APIs (example:  `/health` and `/metrics` endpoints.)
+- Communication via shared `transcendence-network`.
+- Independent deployment and scaling, monitored individually.
+
+This image from Prometheus showing the microservices and exporters being monitored :
+
+![Prometheus-Microservices-Exporters](services-screenshots/prometheus/Prometheus-Microservices-Exporters.png)
+
+<a id="cybersecurity"></a>
+## 🛡️ Cybersecurity
 
 <a id="waf-modsecurity"></a>
 ### WAF – ModSecurity with Hardened Configuration 
@@ -119,15 +137,16 @@ This is a dashboard in Kibana from the collected logs:
 ### HashiCorp Vault – Secrets Management
   - [HashiCorp Vault](https://www.vaultproject.io/)
 
-## Server-Side Pong & API
+<a id="game-logic"></a>
+## 🏓 Game Logic
 
 <a id="server-side-pong-api"></a>
 ### Server-side Pong & API – Replace basic Pong with server-side Pong and implement an API
 
 <a id="web-development"></a>
-## Web Development  
+## 💻 Web Development  
 
-The website is composed by:  
+The website is composed by these technologies :  
 
 - **Backend:** [Fastify](https://fastify.dev/) with Node.js  
 - **Frontend:** [Tailwind CSS](https://tailwindcss.com/) for styling  
