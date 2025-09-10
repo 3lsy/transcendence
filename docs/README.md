@@ -120,6 +120,8 @@ This image is from Prometheus showing the microservices and exporters being moni
 <a id="cybersecurity"></a>
 ## 🛡️ Cybersecurity
 
+![vault-ui](services-screenshots/vault/Vault-secrets.png)
+
 <a id="waf-modsecurity"></a>
 ### WAF – ModSecurity with Hardened Configuration 
   - [ModSecurity](https://modsecurity.org/)  
