@@ -122,7 +122,7 @@ This is a dashboard in Kibana from the collected logs :
 - Communication via shared `transcendence-network`.
 - Independent deployment and scaling, monitored individually.
 
-This image from Prometheus showing the microservices and exporters being monitored :
+This image is from Prometheus showing the microservices and exporters being monitored :
 
 ![Prometheus-Microservices-Exporters](services-screenshots/prometheus/Prometheus-Microservices-Exporters.png)
 
