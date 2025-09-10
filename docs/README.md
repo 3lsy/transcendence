@@ -42,10 +42,6 @@
 
 ![Architecture-Diagram](Architecture-Diagram.png)
 
-## Project Structure
-
-![Project Structure](Project.png)
-
 <a id="build-deployment"></a>
 ## 🚀 Build & Deployment
 
@@ -53,6 +49,8 @@
 ./setup_certs.sh
 ./setup_volumes.sh
 docker compose up -d
+# Add these domains to your /etc/hosts file for local testing
+echo '42.fr rproxy.42.fr transcendence.42.fr pong.42.fr grafana.42.fr prometheus.42.fr vault.42.fr elastic.42.fr kibana.42.fr cadvisor.42.fr api-gateway.42.fr' | sudo tee -a /etc/hosts
 ```
 
 ## 🧩 Modules
@@ -71,13 +69,6 @@ docker compose up -d
 - **blackbox-exporter** → health probes on all services.
 - **apache-exporter** → Apache reverse proxy metrics.
 - **Fastify built-in metrics** → Each backend microservice (`game-service`, `scoreboard-service`, `tournament-service`) exposes Prometheus metrics (`/metrics` endpoint).
-
-**Prometheus alert rules :**
-- `InstanceDown` → container unavailable.
-- `ServiceDown` → failing health probes.
-- `HighContainerCPU` (>85%).
-
-![Prometheus-Alerts-Page-Complete](services-screenshots/prometheus/Prometheus-Alerts-Page-Complete.png)
 
 <a id="grafana-dashboards"></a>
 **Grafana dashboards :**
@@ -156,6 +147,8 @@ The website is composed by these technologies :
 
 ## Website
 
+![Pong-Homepage](services-screenshots/website/Pong-Home.png)
+
 ### Back - Front Communication Diagram
 
 ![Back-Front Communication](Back-Front-Communication.png)
@@ -172,6 +165,8 @@ The website is composed by these technologies :
 | **Deployment** | The entire website must be containerized with Docker and launchable via a single command. |
 
 ## Base of the Pong Game
+
+![Pong-Game](services-screenshots/website/Pong-Game.png)
 
 | Feature | Requirements |
 |---------|-------------|
@@ -193,3 +188,6 @@ The website is composed by these technologies :
 | **Environment Configuration** | Sensitive credentials must be stored in a `.env` file and excluded from version control. |
 
 
+## Project Structure
+
+![Project Structure](Project.png)
