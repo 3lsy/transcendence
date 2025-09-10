@@ -123,12 +123,14 @@ This image is from Prometheus showing the microservices and exporters being moni
 ![vault-ui](services-screenshots/vault/Vault-secrets.png)
 
 <a id="waf-modsecurity"></a>
-### WAF – ModSecurity with Hardened Configuration 
+### WAF – ModSecurity with Hardened Configuration in the Apache Reverse Proxy
   - [ModSecurity](https://modsecurity.org/)  
 
 <a id="vault"></a>
 ### HashiCorp Vault – Secrets Management
   - [HashiCorp Vault](https://www.vaultproject.io/)
+
+Automatic retrieval and storage of sensitive data (e.g., API Keys, Tokens, credentials, ...) for services using Vault CLI and API, using Public/Private Certificates and policies for access control.
 
 <a id="game-logic"></a>
 ## 🏓 Game Logic
