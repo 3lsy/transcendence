@@ -24,19 +24,18 @@
 
 1. [Infrastructure Architecture](#infrastructure-architecture)  
 2. [Project Structure](#project-structure)  
-3. [Build & Deployment](#build--deployment)  
+3. [Build & Deployment](#build-deployment)  
 4. [Modules](#modules)  
    - [DevOps](#devops)
-     - [Monitoring – Prometheus & Grafana](#monitoring--prometheus--grafana)  
+     - [Monitoring – Prometheus & Grafana](#prometheus-grafana)  
      - [ELK Stack](#elk-stack)  
      - [Microservices](#microservices)  
    - [Cybersecurity](#cybersecurity)  
-     - [WAF – ModSecurity](#waf--modsecurity)  
-     - [Secrets Management – Hashicorp Vault](#secrets-management--vault)  
+     - [WAF – ModSecurity](#waf-modsecurity)  
+     - [Secrets Management – Hashicorp Vault](#vault)  
    - [Game Logic](#game-logic)  
-     - [Server-Side Pong & API](#server-side-pong--api)  
+     - [Server-Side Pong & API](#server-side-pong-api)  
    - [Web Development](#web-development) 
-5. [Bonus Modules](#bonus-modules) 
 
 ## Infrastructure Architecture
 
@@ -46,6 +45,7 @@
 
 ![Project Structure](Project.png)
 
+<a id="build-deployment"></a>
 ## 🚀 Build & Deployment
 
 ```bash
@@ -54,31 +54,77 @@
 docker compose up -d
 ```
 
-## Modules
+## 🧩 Modules
 
 > This project is structured into several modules, each focusing on different aspects:
 
 ## DevOps
 
-### ELK Stack – Infrastructure setup with ELK for log management (Major)  
-  - [Elasticsearch](https://www.elastic.co/elasticsearch/)  
-  - [Logstash](https://www.elastic.co/logstash/)  
-  - [Kibana](https://www.elastic.co/kibana/)
-### Monitoring system – Add a system to monitor infrastructure and services (Minor)  
-  - [Prometheus](https://prometheus.io/)  
-  - [Grafana](https://grafana.com/)
-### Microservices – Design the backend as microservices (Major)
+<a id="prometheus-grafana"></a>
+### Prometheus & Grafana – Monitoring system for infrastructure and services
+
+[Prometheus](https://prometheus.io/) gathers metrics from services and infrastructure using various exporters and can trigger **alerts** based on defined rules, while [Grafana](https://grafana.com/) is used for visualizing these metrics through dashboards.
+
+**Data exporters :**
+- **cAdvisor** → container-level CPU, memory, disk, and network usage.
+- **blackbox-exporter** → health probes on all services.
+- **apache-exporter** → Apache reverse proxy metrics.
+- **Fastify built-in metrics** → Each backend microservice (`game-service`, `scoreboard-service`, `tournament-service`) exposes Prometheus metrics (`/metrics` endpoint).
+
+**Prometheus alert rules :**
+- `InstanceDown` → container unavailable.
+- `ServiceDown` → failing health probes.
+- `HighContainerCPU` (>85%).
+
+![Prometheus-Alerts-Page](services-screenshots/prometheus/Prometheus-Alerts-Page-Complete.png)
+
+**Grafana dashboards :**
+- **Infrastructure Dashboard**  : container resource usage, uptime, node metrics.
+- **Service Metrics Dashboard** : latency, error rates, throughput for microservices (via Fastify metrics), HTTP success/failure ratios, and exporter data.
+
+📈 **Infrastructure Dashboard :**
+
+![Grafana-Infrastructure-Dashboard](services-screenshots/grafana/Grafana-Infrastructure-Dashboard.png)
+
+📊 **Service Metrics Dashboard :**
+
+![Grafana-Service-Metrics-Dashboard-Complete](services-screenshots/grafana/Grafana-Service-Metrics-Dashboard-Complete.png)
+
+<a id="elk-stack"></a>
+### ELK Stack – Log Management Infrastructure
+
+**Log collection** is handled by [Filebeat](https://www.elastic.co/docs/reference/beats/filebeat/) from multiple services such as:
+  - Apache reverse proxy (access/error logs).
+  - WAF (ModSecurity logs).
+  - Vault audit logs.
+
+This are the logs collected with filebeat, processed through [Logstash](https://www.elastic.co/logstash/), indexed in [Elasticsearch](https://www.elastic.co/elasticsearch/) and visualized in [Kibana](https://www.elastic.co/kibana/):
+
+![ELK-Logs-in-Kibana](services-screenshots/elastic/ELK-Logs-in-Kibana.png)
+
+This is a dashboard in Kibana from the collected logs:
+
+![ELK-Kibana-Dashboards](services-screenshots/elastic/ELK-Kibana-Dashboards.png)
+
+<a id="microservices"></a>
+### Microservices – Design the Backend as microservices
 
 ## Cybersecurity
 
-### WAF & Vault – Implement WAF/ModSecurity with Hardened Configuration and HashiCorp Vault for Secrets Management (Major)  
+<a id="waf-modsecurity"></a>
+### WAF – ModSecurity with Hardened Configuration 
   - [ModSecurity](https://modsecurity.org/)  
+
+<a id="vault"></a>
+### HashiCorp Vault – Secrets Management
   - [HashiCorp Vault](https://www.vaultproject.io/)
 
 ## Server-Side Pong & API
 
-### Server-side Pong & API – Replace basic Pong with server-side Pong and implement an API (Major)
+<a id="server-side-pong-api"></a>
+### Server-side Pong & API – Replace basic Pong with server-side Pong and implement an API
 
+<a id="web-development"></a>
 ## Web Development  
 
 The website is composed by:  
